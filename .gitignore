@@ -1,0 +1,21 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+app/build
+
+# Kotlin build artifacts
+.kotlin
+
+# Local agent workspace
+.openclaw
+.zcode
+
+# Local build logs (kept out of the repo)
+build-info.txt
+build-log*.txt
