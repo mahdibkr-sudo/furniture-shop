@@ -42,6 +42,7 @@ class RoutesTest {
             Routes.CHECKS,
             Routes.CHECK_DETAIL,
             Routes.CHECK_TRANSFER,
+            Routes.CASH_PAYMENTS,
             Routes.EXPENSES,
             Routes.EXPENSE_EDIT,
             Routes.EXPENSE_DETAIL,
@@ -89,16 +90,17 @@ class RoutesTest {
         )
     }
 
-    // ---- صفحه اصلی: فقط ۷ ماژول ناوبری ----
+    // ---- صفحه اصلی: فقط ۸ ماژول ناوبری ----
 
     @Test
-    fun `home has exactly the 7 required modules with valid routes`() {
+    fun `home has exactly the 8 required modules with valid routes`() {
         val expectedRoutes = listOf(
             Routes.PRODUCTS,
             Routes.CUSTOMERS,
             Routes.SUPPLIERS,
             Routes.INVOICES,
             Routes.CHECKS,
+            Routes.CASH_PAYMENTS,
             Routes.EXPENSES,
             Routes.FINANCIAL_OVERVIEW
         )
@@ -108,11 +110,12 @@ class RoutesTest {
             "تأمین‌کنندگان",
             "فاکتورها",
             "چک‌ها",
+            "پرداخت‌های نقدی",
             "هزینه‌های جانبی",
             "حساب مالی"
         )
 
-        assertEquals(7, HOME_MODULES.size)
+        assertEquals(8, HOME_MODULES.size)
         assertEquals(expectedTitles, HOME_MODULES.map { it.title })
         assertEquals(expectedRoutes, HOME_MODULES.map { it.route })
 

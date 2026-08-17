@@ -13,7 +13,7 @@
 ![Architecture](https://img.shields.io/badge/MVVM-Repository-FF6F00?style=flat-square)
 ![Offline](https://img.shields.io/badge/100%25-Offline-2EA44F?style=flat-square)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
-![Tests](https://img.shields.io/badge/tests-94%20passed-brightgreen?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-99%20passed-brightgreen?style=flat-square)
 
 </div>
 
@@ -31,9 +31,10 @@
 | 💳 **پرداخت** | نقد و چک + تراز بدون Double Counting |
 | 🚚 **تأمین‌کنندگان** | پروفایل + خرید جنسی + پرداخت + تراز Supplier |
 | 🏦 **سیستم چک یکپارچه** | دریافت چک از مشتری ← انتقال اتمیک همان چک به تأمین‌کننده با شماره یکتا |
+| 💵 **پرداخت‌های نقدی** | بخش اختصاصی لیست دریافتی‌های نقدی از مشتریان (مشابه بخش چک‌ها) |
 | 💸 **هزینه‌های جانبی** | پنل Expense مستقل از Supplier |
 | 📊 **حساب مالی** | وضعیت مالی کلی از داده‌های موجود |
-| 🏠 **داشبورد** | صفحه اصلی سبک با ناوبری به ۷ بخش |
+| 🏠 **داشبورد** | صفحه اصلی سبک با ناوبری به ۸ بخش |
 | 🖨️ **خروجی فاکتور** | PDF / تصویر فارسی RTL با طراحی مینیمال «میراکل» + اشتراک‌گذاری |
 | 📅 **تقویم شمسی** | تقویم انتخاب تاریخ جلالی (الگوریتم ۳۳ ساله، بدون کتابخانه خارجی) |
 | 🔢 **اعداد فارسی** | جداکننده هزارگان «٬» و ارقام فارسی در کل اپ |
@@ -67,9 +68,9 @@ flowchart RL
 | | |
 |:---:|:---:|
 | 🧑‍💻 فایل Kotlin سورس | ۹۱ |
-| 🧪 فایل تست (واحد) | ۱۳ — شامل ۹۴ تست |
-| 🖥️ صفحه UI | ۲۳ |
-| 🧠 ViewModel | ۲۳ |
+| 🧪 فایل تست (واحد) | ۱۴ — شامل ۹۹ تست |
+| 🖥️ صفحه UI | ۲۴ |
+| 🧠 ViewModel | ۲۴ |
 | 💾 Entity | ۱۱ |
 | 📦 Repository | ۸ |
 | 🔍 DAO | ۹ |
@@ -90,13 +91,13 @@ app/src/main/java/ir/furnitureshop/app/
 │  ├─ entity/                   ← ۱۱ Entity + PaymentMethod/CheckStatus/CheckFlow
 │  └─ repository/               ← ۸ Repository
 ├─ ui/
-│  ├─ screens/                  ← Home + محصولات + مشتریان + فاکتور + چک + Expense + حساب مالی
+│  ├─ screens/                  ← Home + محصولات + مشتریان + فاکتور + چک + نقدی + Expense + حساب مالی
 │  ├─ components/               ← ProductImage (دیکد هوشمند), JalaliDatePickerDialog
 │  └─ theme/                    ← Color.kt, Theme.kt, Type.kt
 ├─ navigation/AppNavHost.kt     ← Routes (همه صفحه‌ها)
 ├─ util/                        ← PriceFormatter, Calculators, DigitNormalizer,
 │                                  JalaliDate, CrashLogger, InvoicePrint/InvoiceExport
-└─ viewmodel/                   ← ۲۳ ViewModel
+└─ viewmodel/                   ← ۲۴ ViewModel
 ```
 
 <div dir="rtl">
@@ -136,7 +137,7 @@ app/src/main/java/ir/furnitureshop/app/
 <details>
 <summary><b>🧪 فهرست تست‌های واحد (۹۴ تست) — کلیک کنید</b></summary>
 
-`PriceFormatter` · `InvoiceCalculator` · `BalanceCalculator` · `SupplierBalanceCalculator` · `CheckFlow` · `ExpenseAndOverview` · `FinancialAccount` · `Routes` · `InvoicePrint` · `EndToEndScenario` · `FinalFinancialAudit` · `JalaliDate` · `CustomerProfileState`
+`PriceFormatter` · `InvoiceCalculator` · `BalanceCalculator` · `SupplierBalanceCalculator` · `CheckFlow` · `ExpenseAndOverview` · `FinancialAccount` · `Routes` · `InvoicePrint` · `EndToEndScenario` · `FinalFinancialAudit` · `JalaliDate` · `CustomerProfileState` · `CashPaymentList`
 
 </details>
 

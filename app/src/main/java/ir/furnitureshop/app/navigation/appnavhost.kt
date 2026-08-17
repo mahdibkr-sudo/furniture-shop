@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ir.furnitureshop.app.ui.screens.CashPaymentsScreen
 import ir.furnitureshop.app.ui.screens.CheckDetailScreen
 import ir.furnitureshop.app.ui.screens.CheckTransferScreen
 import ir.furnitureshop.app.ui.screens.ChecksScreen
@@ -55,6 +56,8 @@ object Routes {
     const val CHECKS = "checks"
     const val CHECK_DETAIL = "check_detail?checkId={checkId}"
     const val CHECK_TRANSFER = "check_transfer?checkId={checkId}&supplierId={supplierId}"
+
+    const val CASH_PAYMENTS = "cash_payments"
 
     const val EXPENSES = "expenses"
     const val EXPENSE_EDIT = "expense_edit?expenseId={expenseId}"
@@ -281,6 +284,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 checkId = if (checkId > 0) checkId else 0L,
                 supplierId = if (supplierId > 0) supplierId else null
             )
+        }
+
+        // --- پرداخت‌های نقدی ---
+        composable(Routes.CASH_PAYMENTS) {
+            CashPaymentsScreen(navController)
         }
 
         // --- هزینه‌های جانبی ---

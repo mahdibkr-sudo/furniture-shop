@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
@@ -63,6 +64,7 @@ private fun HomeModuleData.icon(): ImageVector = when (route) {
     Routes.SUPPLIERS -> Icons.Filled.Face
     Routes.INVOICES -> Icons.Filled.Create
     Routes.CHECKS -> Icons.Filled.DateRange
+    Routes.CASH_PAYMENTS -> Icons.Filled.AccountBalanceWallet
     Routes.EXPENSES -> Icons.Filled.ShoppingCart
     Routes.FINANCIAL_OVERVIEW -> Icons.Filled.DateRange
     else -> Icons.Filled.Create

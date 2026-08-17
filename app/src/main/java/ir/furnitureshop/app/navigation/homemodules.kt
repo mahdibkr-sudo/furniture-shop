@@ -12,7 +12,7 @@ data class HomeModuleData(
 )
 
 /**
- * دقیقاً ۷ بخش اصلی اپ.
+ * دقیقاً ۸ بخش اصلی اپ.
  * (Payment مستقل از پروفایل مشتری/تأمین‌کننده ساخته نمی‌شود؛ اینجا فقط ورودی بخش‌هاست.)
  */
 val HOME_MODULES: List<HomeModuleData> = listOf(
@@ -40,6 +40,11 @@ val HOME_MODULES: List<HomeModuleData> = listOf(
         title = "چک‌ها",
         subtitle = "لیست چک‌ها، جزئیات و انتقال به تأمین‌کننده",
         route = Routes.CHECKS
+    ),
+    HomeModuleData(
+        title = "پرداخت‌های نقدی",
+        subtitle = "لیست دریافتی‌های نقدی از مشتریان",
+        route = Routes.CASH_PAYMENTS
     ),
     HomeModuleData(
         title = "هزینه‌های جانبی",
