@@ -240,7 +240,7 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
                         )
                     }
                 } else {
-                    items(uiState.invoices, key = { it.id }) { invoice ->
+                    items(uiState.invoices, key = { "invoice_${it.id}" }) { invoice ->
                         InvoiceRow(invoice)
                     }
                 }
@@ -262,7 +262,7 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
                         )
                     }
                 } else {
-                    items(uiState.payments, key = { it.id }) { payment ->
+                    items(uiState.payments, key = { "payment_${it.id}" }) { payment ->
                         PaymentRow(payment)
                     }
                 }
@@ -284,7 +284,7 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
                         )
                     }
                 } else {
-                    items(uiState.checks, key = { it.id }) { check ->
+                    items(uiState.checks, key = { "check_${it.id}" }) { check ->
                         CustomerCheckRow(check)
                     }
                 }

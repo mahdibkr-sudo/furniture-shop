@@ -265,7 +265,7 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
                         )
                     }
                 } else {
-                    items(uiState.purchases, key = { it.id }) { purchase ->
+                    items(uiState.purchases, key = { "purchase_${it.id}" }) { purchase ->
                         PurchaseRow(purchase)
                     }
                 }
@@ -287,7 +287,7 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
                         )
                     }
                 } else {
-                    items(uiState.payments, key = { it.id }) { payment ->
+                    items(uiState.payments, key = { "payment_${it.id}" }) { payment ->
                         SupplierPaymentRow(payment)
                     }
                 }
@@ -309,7 +309,7 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
                         )
                     }
                 } else {
-                    items(uiState.checks, key = { it.id }) { check ->
+                    items(uiState.checks, key = { "check_${it.id}" }) { check ->
                         SupplierCheckRow(check)
                     }
                 }
