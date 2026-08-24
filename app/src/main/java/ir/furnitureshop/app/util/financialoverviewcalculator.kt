@@ -2,6 +2,7 @@ package ir.furnitureshop.app.util
 
 import ir.furnitureshop.app.data.entity.Expense
 import ir.furnitureshop.app.data.entity.Invoice
+import ir.furnitureshop.app.data.entity.LegacyDebt
 import ir.furnitureshop.app.data.entity.Payment
 import ir.furnitureshop.app.data.entity.Purchase
 import ir.furnitureshop.app.data.entity.SupplierPayment
@@ -28,13 +29,14 @@ data class FinancialOverview(
     val totalReceived: Long = 0,
     val totalPurchases: Long = 0,
     val totalPaidToSuppliers: Long = 0,
-    val totalExpenses: Long = 0
+    val totalExpenses: Long = 0,
+    val totalLegacyDebts: Long = 0
 ) {
     /** مبلغ خرید جنسی = جمع خریدها از تأمین‌کنندگان */
     val purchasesGoods: Long get() = totalPurchases
 
-    /** تراز مشتریان = بدهی آن‌ها به ما (منطق قبلی BalanceCalculator) */
-    val customersBalance: Long get() = totalSales - totalReceived
+    /** تراز مشتریان = بدهی آن‌ها به ما + بدهی‌های قبلی (منطق BalanceCalculator) */
+    val customersBalance: Long get() = totalSales + totalLegacyDebts - totalReceived
 
     /** تراز تأمین‌کنندگان = بدهی ما به آن‌ها (منطق قبلی SupplierBalanceCalculator) */
     val suppliersBalance: Long get() = totalPurchases - totalPaidToSuppliers
@@ -50,13 +52,15 @@ object FinancialOverviewCalculator {
         payments: List<Payment>,
         purchases: List<Purchase>,
         supplierPayments: List<SupplierPayment>,
-        expenses: List<Expense>
+        expenses: List<Expense>,
+        legacyDebts: List<LegacyDebt> = emptyList()
     ): FinancialOverview = FinancialOverview(
         totalSales = BalanceCalculator.purchasesTotal(invoices),
         totalReceived = BalanceCalculator.paymentsTotal(payments),
         totalPurchases = SupplierBalanceCalculator.purchasesTotal(purchases),
         totalPaidToSuppliers = SupplierBalanceCalculator.paymentsTotal(supplierPayments),
-        totalExpenses = expenses.sumOf { it.amount }
+        totalExpenses = expenses.sumOf { it.amount },
+        totalLegacyDebts = BalanceCalculator.legacyDebtsTotal(legacyDebts)
     )
 
     /** جمع کل هزینه‌های جانبی */

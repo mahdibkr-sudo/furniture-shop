@@ -10,10 +10,13 @@ import ir.furnitureshop.app.data.entity.CheckFlow
 import ir.furnitureshop.app.data.entity.Supplier
 import ir.furnitureshop.app.data.repository.CheckRepository
 import ir.furnitureshop.app.data.repository.SupplierRepository
+import ir.furnitureshop.app.util.YearFilter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
 data class CheckListUiState(
@@ -29,17 +32,23 @@ data class CheckListUiState(
     }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CheckListViewModel(
     checkRepository: CheckRepository,
     supplierRepository: SupplierRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<CheckListUiState> =
-        combine(
-            checkRepository.observeAllWithCustomer(),
-            supplierRepository.observeSuppliers()
-        ) { checks, suppliers ->
-            CheckListUiState(checks = checks, suppliers = suppliers)
+        YearFilter.selectedYear.flatMapLatest { year ->
+            combine(
+                checkRepository.observeAllWithCustomer(),
+                supplierRepository.observeSuppliers()
+            ) { checks, suppliers ->
+                CheckListUiState(
+                    checks = checks.filter { YearFilter.isInYear(it.check.receiveDate, year) },
+                    suppliers = suppliers
+                )
+            }
         }.catch { e -> emit(CheckListUiState(loadError = e.message ?: "خطا در بارگذاری چک‌ها")) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CheckListUiState())
 

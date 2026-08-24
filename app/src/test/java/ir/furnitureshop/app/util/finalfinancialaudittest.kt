@@ -415,4 +415,42 @@ class FinalFinancialAuditTest {
         assertFalse(lines.joinToString { it.text }.contains("پرداخت"))
         assertFalse(lines.joinToString { it.text }.contains("تسویه"))
     }
+
+    // ============ ۵۰: رسید پرداخت نقدی تأمین‌کننده - تراز دست‌نخورده ============
+
+    @Test
+    fun `supplier payment with receipt keeps financial logic intact`() {
+        // پرداخت نقدی با رسید: مبلغ دست‌نخورده باقی می‌ماند
+        val spWithReceipt = SupplierPayment(
+            supplierId = 5,
+            amount = 50_000_000,
+            method = PaymentMethod.CASH.stored,
+            receiptImagePath = "/path/receipt.jpg"
+        )
+        val purchases = listOf(Purchase(id = 1, supplierId = 5, totalAmount = 200_000_000))
+        assertEquals(150_000_000L, SupplierBalanceCalculator.balance(purchases, listOf(spWithReceipt)))
+        // مبلغ پرداخت تغییر نکرده
+        assertEquals(50_000_000L, spWithReceipt.amount)
+        assertEquals(PaymentMethod.CASH.stored, spWithReceipt.method)
+        // تراز با پرداخت بدون رسید دقیقاً یکسان
+        val spNoReceipt = spWithReceipt.copy(receiptImagePath = null)
+        assertEquals(
+            SupplierBalanceCalculator.balance(purchases, listOf(spWithReceipt)),
+            SupplierBalanceCalculator.balance(purchases, listOf(spNoReceipt))
+        )
+    }
+
+    @Test
+    fun `check payment to supplier never gets receipt field effect`() {
+        // چک پرداختی نباید تحت تأثیر فیلد رسید قرار بگیرد (فقط پرداخت نقدی رسید دارد)
+        val checkPayment = SupplierPayment(
+            supplierId = 5,
+            amount = 100_000_000,
+            method = PaymentMethod.CHECK.stored,
+            receiptImagePath = null
+        )
+        val purchases = listOf(Purchase(id = 1, supplierId = 5, totalAmount = 100_000_000))
+        assertEquals(0L, SupplierBalanceCalculator.balance(purchases, listOf(checkPayment)))
+        assertEquals(100_000_000L, SupplierBalanceCalculator.paymentsTotal(listOf(checkPayment)))
+    }
 }

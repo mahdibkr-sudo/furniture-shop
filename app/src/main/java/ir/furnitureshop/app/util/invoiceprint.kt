@@ -25,7 +25,7 @@ data class InvoicePrintData(
     val customerName: String,
     val customerPhone: String?,
     val items: List<InvoicePrintItem>,
-    /** فقط وقتی خود فروشگاه پارچه تهیه کرده باشد (مبلغ در همان Invoice لحاظ شده) */
+    /** خط پارچه — وقتی فروشگاه تهیه کرده (مبلغ + نام) یا وقتی مشتری آورده ولی نام پارچه ثبت شده */
     val fabricLine: String?,
     val discount: Long,
     val totalAmount: Long
@@ -43,17 +43,22 @@ object InvoicePrintFormatter {
             )
         }
 
-        // پارچه فقط وقتی فروشگاه تهیه کرده و مبلغش > ۰ است نمایش داده می‌شود؛
-        // اگر مشتری آورده باشد هیچ مبلغی اضافه نمی‌شود و خطی هم نمی‌آید.
-        // فاکتورهای جدید: «متراژ × قیمت هر متر»؛ فاکتورهای قدیمی فقط مبلغ کل دارند.
-        val fabricLine = if (!invoice.fabricCustomerProvided && invoice.fabricAmount > 0) {
-            if (invoice.fabricMeters > 0 && invoice.fabricUnitPrice > 0) {
-                "پارچه (تهیه‌شده توسط فروشگاه): ${PriceFormatter.formatMeters(invoice.fabricMeters)} متر × ${PriceFormatter.format(invoice.fabricUnitPrice)} تومان = ${PriceFormatter.format(invoice.fabricAmount)} تومان"
-            } else {
-                "پارچه (تهیه‌شده توسط فروشگاه): ${PriceFormatter.format(invoice.fabricAmount)} تومان"
+        // نام پارچه (در صورت ثبت) در هر دو حالت تهیه در خروجی می‌آید.
+        // تهیه توسط فروشگاه: «متراژ × قیمت هر متر»؛ فاکتورهای قدیمی فقط مبلغ کل دارند.
+        // تهیه توسط مشتری: مبلغی اضافه نمی‌شود؛ فقط اگر نام پارچه ثبت شده باشد خط نام می‌آید.
+        val fabricName = invoice.fabricName?.takeIf { it.isNotBlank() }
+        val fabricLine = when {
+            !invoice.fabricCustomerProvided && invoice.fabricAmount > 0 -> {
+                val label = "پارچه" + (fabricName?.let { " ($it)" } ?: "") + " (تهیه‌شده توسط فروشگاه)"
+                if (invoice.fabricMeters > 0 && invoice.fabricUnitPrice > 0) {
+                    "$label: ${PriceFormatter.formatMeters(invoice.fabricMeters)} متر × ${PriceFormatter.format(invoice.fabricUnitPrice)} تومان = ${PriceFormatter.format(invoice.fabricAmount)} تومان"
+                } else {
+                    "$label: ${PriceFormatter.format(invoice.fabricAmount)} تومان"
+                }
             }
-        } else {
-            null
+            invoice.fabricCustomerProvided && fabricName != null ->
+                "پارچه ($fabricName) — تأمین توسط مشتری"
+            else -> null
         }
 
         return InvoicePrintData(

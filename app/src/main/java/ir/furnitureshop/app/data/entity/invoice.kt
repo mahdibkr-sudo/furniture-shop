@@ -15,6 +15,7 @@ import androidx.room.PrimaryKey
  * - fabricMeters: متراژ پارچه (مثلاً ۳/۵ متر) — فقط وقتی فروشگاه تهیه کرده
  * - fabricUnitPrice: قیمت هر متر پارچه
  * - fabricAmount: مبلغ کل پارچه = متراژ × قیمت واحد (برای فاکتورهای قدیمی فقط مبلغ ذخیره شده)
+ * - fabricName: نام پارچه (اختیاری) — در هر دو حالت تهیه توسط مشتری یا فروشگاه ثبت می‌شود
  * - totalAmount: مبلغ نهایی = جمع اقلام − تخفیف + (پارچه در صورت تهیه توسط ما)
  *
  * پارچه بخشی از همین فاکتور است، نه فاکتور جدا.
@@ -45,5 +46,6 @@ data class Invoice(
     val fabricUnitPrice: Long = 0,
     val fabricAmount: Long = 0,
     val totalAmount: Long = 0,
+    val fabricName: String? = null,
     val note: String? = null
 )

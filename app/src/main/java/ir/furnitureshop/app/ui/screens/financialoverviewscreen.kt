@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ir.furnitureshop.app.FurnitureApplication
+import ir.furnitureshop.app.ui.components.YearSwitcher
 import ir.furnitureshop.app.util.FinancialOverview
 import ir.furnitureshop.app.util.PriceFormatter
 import ir.furnitureshop.app.viewmodel.FinancialOverviewViewModel
@@ -58,7 +59,8 @@ fun FinancialOverviewScreen(navController: NavHostController) {
             invoiceRepository = app.invoiceRepository,
             paymentRepository = app.paymentRepository,
             supplierRepository = app.supplierRepository,
-            expenseRepository = app.expenseRepository
+            expenseRepository = app.expenseRepository,
+            legacyDebtRepository = app.legacyDebtRepository
         )
     )
     val overview by viewModel.uiState.collectAsState()
@@ -71,6 +73,10 @@ fun FinancialOverviewScreen(navController: NavHostController) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "بازگشت")
                     }
+                },
+                actions = {
+                    // آمار این صفحه فقط مربوط به سال انتخابی است
+                    YearSwitcher()
                 }
             )
         }

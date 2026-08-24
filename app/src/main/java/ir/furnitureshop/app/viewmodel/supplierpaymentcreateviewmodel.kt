@@ -1,5 +1,6 @@
 package ir.furnitureshop.app.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import ir.furnitureshop.app.data.entity.PaymentMethod
 import ir.furnitureshop.app.data.entity.SupplierPayment
+import ir.furnitureshop.app.data.local.ReceiptImageStore
 import ir.furnitureshop.app.data.repository.SupplierRepository
 import ir.furnitureshop.app.util.DigitNormalizer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 data class SupplierPaymentCreateUiState(
     val supplierName: String? = null,
     val amountText: String = "",
+    val receiptImagePath: String? = null,
     val error: String? = null,
     val isSaved: Boolean = false
 )
@@ -30,6 +33,7 @@ data class SupplierPaymentCreateUiState(
  */
 class SupplierPaymentCreateViewModel(
     private val repository: SupplierRepository,
+    private val imageStore: ReceiptImageStore,
     private val supplierId: Long
 ) : ViewModel() {
 
@@ -51,6 +55,18 @@ class SupplierPaymentCreateViewModel(
         _uiState.update { it.copy(amountText = DigitNormalizer.digitsOnly(raw), error = null) }
     }
 
+    fun onImagePicked(uri: Uri?) {
+        if (uri == null) return
+        viewModelScope.launch {
+            val path = imageStore.saveImage(uri)
+            _uiState.update { it.copy(receiptImagePath = path, error = null) }
+        }
+    }
+
+    fun clearImage() {
+        _uiState.update { it.copy(receiptImagePath = null) }
+    }
+
     fun save() {
         if (_uiState.value.isSaved) return
         val state = _uiState.value
@@ -67,7 +83,8 @@ class SupplierPaymentCreateViewModel(
                         supplierId = supplierId,
                         amount = amount,
                         date = System.currentTimeMillis(),
-                        method = PaymentMethod.CASH.stored
+                        method = PaymentMethod.CASH.stored,
+                        receiptImagePath = _uiState.value.receiptImagePath
                     )
                 )
                 _uiState.update { it.copy(isSaved = true, error = null) }
@@ -80,10 +97,11 @@ class SupplierPaymentCreateViewModel(
     companion object {
         fun factory(
             repository: SupplierRepository,
+            imageStore: ReceiptImageStore,
             supplierId: Long
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                SupplierPaymentCreateViewModel(repository, supplierId)
+                SupplierPaymentCreateViewModel(repository, imageStore, supplierId)
             }
         }
     }

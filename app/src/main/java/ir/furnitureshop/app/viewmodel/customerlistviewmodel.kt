@@ -68,7 +68,7 @@ class CustomerListViewModel(
             try {
                 val deleted = repository.deleteIfNoInvoices(customer)
                 if (!deleted) {
-                    _deleteError.value = "این مشتری سابقه خرید دارد و قابل حذف نیست"
+                    _deleteError.value = "این مشتری سابقه مالی (فاکتور، پرداخت یا بدهی قبلی) دارد و قابل حذف نیست"
                 }
             } catch (e: Exception) {
                 // حذف مشتریِ دارای پرداخت/چک می‌تواند constraint بدهد — به‌جای کرش، پیام

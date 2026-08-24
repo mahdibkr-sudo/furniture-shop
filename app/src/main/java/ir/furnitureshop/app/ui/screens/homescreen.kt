@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import ir.furnitureshop.app.ui.components.YearSwitcher
 import ir.furnitureshop.app.navigation.HOME_MODULES
 import ir.furnitureshop.app.navigation.HomeModuleData
 import ir.furnitureshop.app.navigation.Routes
@@ -67,6 +69,7 @@ private fun HomeModuleData.icon(): ImageVector = when (route) {
     Routes.CASH_PAYMENTS -> Icons.Filled.AccountBalanceWallet
     Routes.EXPENSES -> Icons.Filled.ShoppingCart
     Routes.FINANCIAL_OVERVIEW -> Icons.Filled.DateRange
+    Routes.BACKUP -> Icons.Filled.Settings
     else -> Icons.Filled.Create
 }
 
@@ -89,7 +92,13 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(uiState.appName) })
+            TopAppBar(
+                title = { Text(uiState.appName) },
+                actions = {
+                    // سوییچ بین سال‌های مالی — آمار هر سال جدا محاسبه می‌شود
+                    YearSwitcher()
+                }
+            )
         }
     ) { innerPadding ->
         LazyColumn(

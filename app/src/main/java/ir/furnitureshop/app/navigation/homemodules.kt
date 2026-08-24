@@ -55,5 +55,10 @@ val HOME_MODULES: List<HomeModuleData> = listOf(
         title = "حساب مالی",
         subtitle = "وضعیت مالی کلی: فروش، دریافتی‌ها، خرید جنسی، پرداخت‌ها و هزینه‌ها",
         route = Routes.FINANCIAL_OVERVIEW
+    ),
+    HomeModuleData(
+        title = "پشتیبان‌گیری",
+        subtitle = "خروجی کامل داده‌ها و بازگردانی (بکاپ هفتگی)",
+        route = Routes.BACKUP
     )
 )

@@ -10,6 +10,8 @@ import androidx.room.PrimaryKey
  *
  * - روش «چک» فقط روش پرداخت است؛ سیستم کامل Check در Task بعدی اضافه می‌شود
  * - تراز تأمین‌کننده = Σ خرید جنسی − Σ پرداخت‌ها
+ * - receiptImagePath: مسیر تصویر رسید (اختیاری) — فقط برای پرداخت نقدی
+ *   در صورت حذف یا عدم‌دسترسی، خود تراکنش مالی معتبر باقی می‌ماند.
  */
 @Entity(
     tableName = "supplier_payments",
@@ -28,5 +30,6 @@ data class SupplierPayment(
     val supplierId: Long,
     val amount: Long = 0,
     val date: Long = System.currentTimeMillis(),
-    val method: String = PaymentMethod.CASH.stored
+    val method: String = PaymentMethod.CASH.stored,
+    val receiptImagePath: String? = null
 )

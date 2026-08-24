@@ -40,6 +40,7 @@ import ir.furnitureshop.app.FurnitureApplication
 import ir.furnitureshop.app.data.dao.CheckWithCustomer
 import ir.furnitureshop.app.data.entity.CheckStatus
 import ir.furnitureshop.app.navigation.Routes
+import ir.furnitureshop.app.ui.components.CopyButton
 import ir.furnitureshop.app.util.JalaliDate
 import ir.furnitureshop.app.util.PriceFormatter
 import ir.furnitureshop.app.viewmodel.CheckListViewModel
@@ -127,6 +128,10 @@ private fun CheckCard(item: CheckWithCustomer, holderLabel: String, onClick: () 
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
+                )
+                CopyButton(
+                    text = check.checkNumber,
+                    contentDescription = "کپی شماره چک"
                 )
                 Text(
                     text = status?.label ?: check.status,

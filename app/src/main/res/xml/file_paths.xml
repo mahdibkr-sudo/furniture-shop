@@ -2,4 +2,6 @@
 <paths>
     <!-- فایل‌های خروجی فاکتور (PDF / Image) در cacheDir/invoices تولید می‌شوند -->
     <cache-path name="invoice_exports" path="invoices/" />
+    <!-- فایل‌های پشتیبان‌گیری دیتابیس در cacheDir/backups تولید می‌شوند -->
+    <cache-path name="backups" path="backups/" />
 </paths>

@@ -155,7 +155,7 @@ fun InvoiceDetailScreen(navController: NavHostController, invoiceId: Long) {
                                     DetailLine("تخفیف", "− " + PriceFormatter.format(invoice.discount))
                                 }
                                 DetailLine(
-                                    "پارچه",
+                                    invoice.fabricName?.takeIf { it.isNotBlank() }?.let { "پارچه ($it)" } ?: "پارچه",
                                     if (invoice.fabricCustomerProvided)
                                         "تأمین توسط مشتری"
                                     else if (invoice.fabricAmount > 0)

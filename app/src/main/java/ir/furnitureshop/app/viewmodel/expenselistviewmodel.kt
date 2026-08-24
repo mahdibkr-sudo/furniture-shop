@@ -8,10 +8,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import ir.furnitureshop.app.data.entity.Expense
 import ir.furnitureshop.app.data.repository.ExpenseRepository
 import ir.furnitureshop.app.util.FinancialOverviewCalculator
+import ir.furnitureshop.app.util.YearFilter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
 data class ExpenseListUiState(
@@ -21,15 +24,19 @@ data class ExpenseListUiState(
 )
 
 /** لیست هزینه‌های جانبی + جمع کل */
+@OptIn(ExperimentalCoroutinesApi::class)
 class ExpenseListViewModel(repository: ExpenseRepository) : ViewModel() {
 
-    val uiState: StateFlow<ExpenseListUiState> = repository.observeAll()
-        .map { expenses ->
-            ExpenseListUiState(
-                expenses = expenses,
-                totalAmount = FinancialOverviewCalculator.expensesTotal(expenses)
-            )
-        }
+    val uiState: StateFlow<ExpenseListUiState> = YearFilter.selectedYear.flatMapLatest { year ->
+        repository.observeAll()
+            .map { all ->
+                val expenses = all.filter { YearFilter.isInYear(it.date, year) }
+                ExpenseListUiState(
+                    expenses = expenses,
+                    totalAmount = FinancialOverviewCalculator.expensesTotal(expenses)
+                )
+            }
+    }
         .catch { e -> emit(ExpenseListUiState(loadError = e.message ?: "خطا در بارگذاری هزینه‌ها")) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExpenseListUiState())
 

@@ -1,7 +1,12 @@
 package ir.furnitureshop.app.ui.screens
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -19,6 +25,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,12 +40,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ir.furnitureshop.app.FurnitureApplication
@@ -48,6 +63,7 @@ import ir.furnitureshop.app.data.entity.PaymentMethod
 import ir.furnitureshop.app.data.entity.Purchase
 import ir.furnitureshop.app.data.entity.SupplierPayment
 import ir.furnitureshop.app.navigation.Routes
+import ir.furnitureshop.app.ui.components.rememberReceiptImage
 import ir.furnitureshop.app.util.JalaliDate
 import ir.furnitureshop.app.util.PriceFormatter
 import ir.furnitureshop.app.viewmodel.SupplierProfileViewModel
@@ -69,6 +85,7 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
     )
     val uiState by viewModel.uiState.collectAsState()
     val supplier = uiState.supplier
+    var selectedReceiptPath by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -102,7 +119,7 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+                contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // ---- اطلاعات ----
@@ -288,7 +305,7 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
                     }
                 } else {
                     items(uiState.payments, key = { "payment_${it.id}" }) { payment ->
-                        SupplierPaymentRow(payment)
+                        SupplierPaymentRow(payment, onReceiptClick = { selectedReceiptPath = it })
                     }
                 }
 
@@ -312,6 +329,41 @@ fun SupplierProfileScreen(navController: NavHostController, supplierId: Long) {
                     items(uiState.checks, key = { "check_${it.id}" }) { check ->
                         SupplierCheckRow(check)
                     }
+                }
+            }
+        }
+    }
+
+    // ---- نمایش تمام صفحه رسید ----
+    if (selectedReceiptPath != null) {
+        Dialog(onDismissRequest = { selectedReceiptPath = null }) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                val bitmap = rememberReceiptImage(selectedReceiptPath)
+                if (bitmap != null) {
+                    Image(
+                        bitmap = bitmap,
+                        contentDescription = "رسید",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit
+                    )
+                } else {
+                    Text(
+                        text = "تصویر یافت نشد",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                IconButton(
+                    onClick = { selectedReceiptPath = null },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "بستن",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }
@@ -395,7 +447,10 @@ private fun PurchaseRow(purchase: Purchase) {
 }
 
 @Composable
-private fun SupplierPaymentRow(payment: SupplierPayment) {
+private fun SupplierPaymentRow(
+    payment: SupplierPayment,
+    onReceiptClick: (String) -> Unit
+) {
     val method = PaymentMethod.fromStored(payment.method)
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -427,6 +482,44 @@ private fun SupplierPaymentRow(payment: SupplierPayment) {
                 text = PriceFormatter.format(payment.amount) + " تومان",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold
+            )
+            if (method == PaymentMethod.CASH && payment.receiptImagePath != null) {
+                ReceiptThumbnail(
+                    path = payment.receiptImagePath,
+                    modifier = Modifier.size(40.dp),
+                    onClick = { onReceiptClick(payment.receiptImagePath!!) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReceiptThumbnail(
+    path: String?,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val bitmap = rememberReceiptImage(path)
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(4.dp))
+            .clickable { bitmap?.let { onClick() } },
+        contentAlignment = Alignment.Center
+    ) {
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap,
+                contentDescription = "رسید",
+                modifier = Modifier.matchParentSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Filled.PhotoCamera,
+                contentDescription = "رسید یافت نشد",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                modifier = Modifier.size(20.dp)
             )
         }
     }

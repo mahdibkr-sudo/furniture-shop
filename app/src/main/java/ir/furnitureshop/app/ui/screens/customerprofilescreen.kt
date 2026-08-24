@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,6 +49,7 @@ import ir.furnitureshop.app.data.entity.Invoice
 import ir.furnitureshop.app.data.entity.Payment
 import ir.furnitureshop.app.data.entity.PaymentMethod
 import ir.furnitureshop.app.navigation.Routes
+import ir.furnitureshop.app.ui.components.CopyButton
 import ir.furnitureshop.app.util.JalaliDate
 import ir.furnitureshop.app.util.PriceFormatter
 import ir.furnitureshop.app.viewmodel.CustomerProfileViewModel
@@ -65,6 +67,7 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
         factory = CustomerProfileViewModel.factory(
             repository = app.customerRepository,
             checkRepository = app.checkRepository,
+            legacyDebtRepository = app.legacyDebtRepository,
             customerId = customerId
         )
     )
@@ -83,10 +86,20 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate(Routes.paymentCreate(customerId))
-            }) {
-                Icon(Icons.Filled.Add, contentDescription = "ثبت پرداختی")
+            Row(
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(Routes.legacyDebtCreate(customerId)) },
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                ) {
+                    Icon(Icons.Filled.History, contentDescription = "ثبت بدهی قبلی")
+                }
+                FloatingActionButton(onClick = {
+                    navController.navigate(Routes.paymentCreate(customerId))
+                }) {
+                    Icon(Icons.Filled.Add, contentDescription = "ثبت پرداختی")
+                }
             }
         }
     ) { innerPadding ->
@@ -223,6 +236,20 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
                     }
                 }
 
+                // ---- بدهی‌های قبلی (سیستم مالی پیشین) ----
+                if (uiState.legacyDebts.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "بدهی‌های قبلی",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    items(uiState.legacyDebts, key = { "legacyDebt_${it.id}" }) { debt ->
+                        LegacyDebtRow(debt)
+                    }
+                }
+
                 // ---- فاکتورها ----
                 item {
                     Text(
@@ -289,6 +316,39 @@ fun CustomerProfileScreen(navController: NavHostController, customerId: Long) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun LegacyDebtRow(debt: ir.furnitureshop.app.data.entity.LegacyDebt) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.History,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.tertiary
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = debt.description ?: "بدهی قبلی (سیستم قبل)",
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(
+                    text = JalaliDate.formatDate(debt.date),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Text(
+                text = PriceFormatter.format(debt.amount) + " تومان",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -368,10 +428,16 @@ private fun CustomerCheckRow(check: Check) {
             )
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "چک ${check.checkNumber}",
-                    style = MaterialTheme.typography.titleSmall
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "چک ${check.checkNumber}",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    CopyButton(
+                        text = check.checkNumber,
+                        contentDescription = "کپی شماره چک"
+                    )
+                }
                 Text(
                     text = "سررسید: " + (check.dueDate?.let {
                         JalaliDate.formatDate(it)

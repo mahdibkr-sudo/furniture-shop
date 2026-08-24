@@ -1,6 +1,7 @@
 package ir.furnitureshop.app.util
 
 import ir.furnitureshop.app.data.entity.Invoice
+import ir.furnitureshop.app.data.entity.LegacyDebt
 import ir.furnitureshop.app.data.entity.Payment
 import ir.furnitureshop.app.data.entity.PaymentMethod
 import org.junit.Assert.assertEquals
@@ -26,6 +27,12 @@ class BalanceCalculatorTest {
         customerId = 1,
         amount = amount,
         method = method.stored
+    )
+
+    private fun legacyDebt(amount: Long) = LegacyDebt(
+        id = 1,
+        customerId = 1,
+        amount = amount
     )
 
     // ---- قانون اصلی: Invoice بدهی ایجاد می‌کند، Payment کاهش می‌دهد ----
@@ -103,5 +110,42 @@ class BalanceCalculatorTest {
         val invoices = listOf(invoice(100), invoice(50))
         val payments = listOf(payment(30))
         assertEquals(120L, BalanceCalculator.balance(invoices, payments))
+    }
+
+    // ---- بدهی قبلی (LegacyDebt) — انتقال از سیستم مالی پیشین بدون فاکتور ----
+
+    @Test
+    fun `legacy debt alone increases balance`() {
+        // بدهی قبلی ۲۰۰ بدون فاکتور و پرداخت → تراز ۲۰۰
+        val debts = listOf(legacyDebt(200))
+        assertEquals(200L, BalanceCalculator.balance(emptyList(), debts, emptyList()))
+    }
+
+    @Test
+    fun `legacy debt plus invoices minus payments`() {
+        // بدهی قبلی ۳۰۰ + فاکتور ۵۰۰ − پرداخت ۴۰۰ → تراز ۴۰۰
+        val invoices = listOf(invoice(500))
+        val debts = listOf(legacyDebt(300))
+        val payments = listOf(payment(400))
+        assertEquals(400L, BalanceCalculator.balance(invoices, debts, payments))
+    }
+
+    @Test
+    fun `multiple legacy debts summed once`() {
+        val debts = listOf(legacyDebt(150), legacyDebt(50))
+        assertEquals(200L, BalanceCalculator.balance(emptyList(), debts, emptyList()))
+    }
+
+    @Test
+    fun `legacy debt fully paid gives zero`() {
+        val debts = listOf(legacyDebt(250))
+        val payments = listOf(payment(250))
+        assertEquals(0L, BalanceCalculator.balance(emptyList(), debts, payments))
+    }
+
+    @Test
+    fun `legacy debts total helper`() {
+        val debts = listOf(legacyDebt(100), legacyDebt(35))
+        assertEquals(135L, BalanceCalculator.legacyDebtsTotal(debts))
     }
 }

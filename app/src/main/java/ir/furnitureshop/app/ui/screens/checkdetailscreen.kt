@@ -39,6 +39,7 @@ import ir.furnitureshop.app.data.entity.Check
 import ir.furnitureshop.app.data.entity.CheckFlow
 import ir.furnitureshop.app.data.entity.CheckStatus
 import ir.furnitureshop.app.navigation.Routes
+import ir.furnitureshop.app.ui.components.CopyButton
 import ir.furnitureshop.app.util.JalaliDate
 import ir.furnitureshop.app.util.PriceFormatter
 import ir.furnitureshop.app.viewmodel.CheckDetailViewModel
@@ -89,12 +90,17 @@ fun CheckDetailScreen(navController: NavHostController, checkId: Long) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = "چک ${check.checkNumber}",
                                 style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f)
+                            )
+                            CopyButton(
+                                text = check.checkNumber,
+                                contentDescription = "کپی شماره چک"
                             )
                             Text(
                                 text = CheckStatus.fromStored(check.status)?.label ?: check.status,

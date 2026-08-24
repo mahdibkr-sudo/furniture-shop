@@ -1,5 +1,7 @@
 package ir.furnitureshop.app.data.entity
 
+import ir.furnitureshop.app.util.DigitNormalizer
+
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -87,9 +89,13 @@ object CheckFlow {
     fun canTransfer(check: Check): Boolean =
         check.currentHolder == HOLDER_SHOP && check.status == CheckStatus.IN_HAND.stored
 
-    /** بررسی شماره تکراری (Duplicate Check ممنوع) */
-    fun isDuplicateNumber(existingNumbers: List<String>, number: String): Boolean =
-        existingNumbers.any { it.equals(number.trim(), ignoreCase = true) }
+    /** بررسی شماره تکراری (Duplicate Check ممنوع) — ارقام فارسی/عربی و انگلیسی یکسان در نظر گرفته می‌شوند */
+    fun isDuplicateNumber(existingNumbers: List<String>, number: String): Boolean {
+        val normalized = DigitNormalizer.normalize(number.trim())
+        return existingNumbers.any {
+            DigitNormalizer.normalize(it.trim()).equals(normalized, ignoreCase = true)
+        }
+    }
 
     /**
      * دریافت چک از مشتری:

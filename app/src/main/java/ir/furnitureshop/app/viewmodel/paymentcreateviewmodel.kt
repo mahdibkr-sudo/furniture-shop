@@ -108,7 +108,10 @@ class PaymentCreateViewModel(
                     )
                     _uiState.update { it.copy(isSaved = true, error = null) }
                 } catch (e: Exception) {
-                    _uiState.update { it.copy(error = e.message ?: "خطا در ثبت پرداخت") }
+                    val msg = if (e is android.database.sqlite.SQLiteConstraintException)
+                        "این شماره چک قبلاً ثبت شده است (Duplicate ممنوع)"
+                    else e.message ?: "خطا در ثبت پرداخت"
+                    _uiState.update { it.copy(error = msg) }
                 }
             }
         } else {

@@ -14,6 +14,7 @@ import ir.furnitureshop.app.data.dao.PaymentDao
 import ir.furnitureshop.app.data.dao.ProductDao
 import ir.furnitureshop.app.data.dao.PurchaseDao
 import ir.furnitureshop.app.data.dao.SupplierDao
+import ir.furnitureshop.app.data.dao.LegacyDebtDao
 import ir.furnitureshop.app.data.dao.SupplierPaymentDao
 import ir.furnitureshop.app.data.entity.Check
 import ir.furnitureshop.app.data.entity.Customer
@@ -24,6 +25,7 @@ import ir.furnitureshop.app.data.entity.Payment
 import ir.furnitureshop.app.data.entity.Product
 import ir.furnitureshop.app.data.entity.Purchase
 import ir.furnitureshop.app.data.entity.Supplier
+import ir.furnitureshop.app.data.entity.LegacyDebt
 import ir.furnitureshop.app.data.entity.SupplierPayment
 
 /**
@@ -40,9 +42,10 @@ import ir.furnitureshop.app.data.entity.SupplierPayment
         Purchase::class,
         Check::class,
         Expense::class,
-        SupplierPayment::class
+        SupplierPayment::class,
+        LegacyDebt::class
     ],
-    version = 9,
+    version = 13,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -56,6 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun supplierPaymentDao(): SupplierPaymentDao
     abstract fun checkDao(): CheckDao
     abstract fun expenseDao(): ExpenseDao
+    abstract fun legacyDebtDao(): LegacyDebtDao
 
     companion object {
         const val DATABASE_NAME = "furniture_shop.db"
@@ -334,6 +338,76 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** v10 -> v11: نام پارچه در فاکتور — ایمن برای داده‌های موجود */
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.execSQL("ALTER TABLE `invoices` ADD COLUMN `fabricName` TEXT")
+                } catch (e: Exception) {
+                    // ستون احتمالاً از قبل وجود دارد یا خطای غیرمنتظره‌ای رخ داده.
+                    // در هر صورت عملیات افزودن ستون نادیده گرفته می‌شود تا مایگریشن ادامه یابد.
+                }
+            }
+        }
+
+        /** v11 -> v12: مسیر تصویر رسید پرداخت نقدی تأمین‌کننده (اختیاری) */
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.execSQL("ALTER TABLE `supplier_payments` ADD COLUMN `receiptImagePath` TEXT")
+                } catch (e: Exception) {
+                    // ستون احتمالاً از قبل وجود دارد یا خطای غیرمنتظره.
+                }
+            }
+        }
+
+        /**
+         * v12 -> v13: ساخت جدول purchases (خرید جنسی از تأمین‌کننده).
+         *
+         * این جدول در مایگریشن‌های قبلی جا افتاده بود؛ برای دیتابیس‌های قدیمی
+         * که ارتقا می‌یابند (و هنوز این جدول را ندارند) به‌صورت ایمن ساخته می‌شود.
+         * `IF NOT EXISTS` تضمین می‌کند که دیتابیس‌های تازه‌نصب (که Room خودش همه جدول‌ها
+         * را ساخته) دچار خطای duplicate نشوند.
+         */
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `purchases` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`supplierId` INTEGER NOT NULL, " +
+                        "`date` INTEGER NOT NULL, " +
+                        "`totalAmount` INTEGER NOT NULL, " +
+                        "`note` TEXT, " +
+                        "FOREIGN KEY(`supplierId`) REFERENCES `suppliers`(`id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_purchases_supplierId` " +
+                        "ON `purchases` (`supplierId`)"
+                )
+            }
+        }
+
+        /** v9 -> v10: جدول جدید legacy_debts (بدهی قبلی مشتری از سیستم مالی پیشین — بدون فاکتور) */
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `legacy_debts` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`customerId` INTEGER NOT NULL, " +
+                        "`amount` INTEGER NOT NULL, " +
+                        "`date` INTEGER NOT NULL, " +
+                        "`description` TEXT, " +
+                        "FOREIGN KEY(`customerId`) REFERENCES `customers`(`id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_legacy_debts_customerId` " +
+                        "ON `legacy_debts` (`customerId`)"
+                )
+            }
+        }
+
         fun build(context: Context): AppDatabase =
             Room.databaseBuilder(
                 context,
@@ -348,7 +422,11 @@ abstract class AppDatabase : RoomDatabase() {
                     MIGRATION_5_6,
                     MIGRATION_6_7,
                     MIGRATION_7_8,
-                    MIGRATION_8_9
+                    MIGRATION_8_9,
+                    MIGRATION_9_10,
+                    MIGRATION_10_11,
+                    MIGRATION_11_12,
+                    MIGRATION_12_13
                 )
                 .build()
     }

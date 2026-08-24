@@ -12,10 +12,13 @@ import ir.furnitureshop.app.data.entity.SupplierPayment
 import ir.furnitureshop.app.data.repository.CheckRepository
 import ir.furnitureshop.app.data.repository.SupplierRepository
 import ir.furnitureshop.app.util.SupplierBalanceCalculator
+import ir.furnitureshop.app.util.YearFilter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
 data class SupplierProfileUiState(
@@ -37,6 +40,7 @@ data class SupplierProfileUiState(
 /**
  * پروفایل تأمین‌کننده — اطلاعات، خریدها (جنسی)، پرداخت‌ها، چک‌های منتقل‌شده و تراز.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class SupplierProfileViewModel(
     private val repository: SupplierRepository,
     checkRepository: CheckRepository,
@@ -44,20 +48,24 @@ class SupplierProfileViewModel(
 ) : ViewModel() {
 
     val uiState: StateFlow<SupplierProfileUiState> =
-        combine(
-            repository.observeById(supplierId),
-            repository.purchasesFor(supplierId),
-            repository.paymentsFor(supplierId),
-            checkRepository.observeBySupplier(supplierId)
-        ) { supplier, purchases, payments, checks ->
-            SupplierProfileUiState(
-                supplier = supplier,
-                purchases = purchases,
-                payments = payments,
-                checks = checks,
-                totalPurchases = SupplierBalanceCalculator.purchasesTotal(purchases),
-                totalPaid = SupplierBalanceCalculator.paymentsTotal(payments)
-            )
+        YearFilter.selectedYear.flatMapLatest { year ->
+            combine(
+                repository.observeById(supplierId),
+                repository.purchasesFor(supplierId),
+                repository.paymentsFor(supplierId),
+                checkRepository.observeBySupplier(supplierId)
+            ) { supplier, purchases, payments, checks ->
+                val yearPurchases = purchases.filter { YearFilter.isInYear(it.date, year) }
+                val yearPayments = payments.filter { YearFilter.isInYear(it.date, year) }
+                SupplierProfileUiState(
+                    supplier = supplier,
+                    purchases = yearPurchases,
+                    payments = yearPayments,
+                    checks = checks.filter { YearFilter.isInYear(it.receiveDate, year) },
+                    totalPurchases = SupplierBalanceCalculator.purchasesTotal(yearPurchases),
+                    totalPaid = SupplierBalanceCalculator.paymentsTotal(yearPayments)
+                )
+            }
         }.catch { e -> emit(SupplierProfileUiState(loadError = e.message ?: "خطا در بارگذاری پروفایل تأمین‌کننده")) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SupplierProfileUiState())
 

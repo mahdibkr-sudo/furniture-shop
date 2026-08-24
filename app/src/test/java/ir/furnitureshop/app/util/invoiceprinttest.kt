@@ -26,6 +26,7 @@ class InvoicePrintTest {
         fabricMeters: Double = 0.0,
         fabricUnitPrice: Long = 0,
         fabricAmount: Long = 0,
+        fabricName: String? = null,
         discount: Long = 0,
         totalAmount: Long
     ) = Invoice(
@@ -38,6 +39,7 @@ class InvoicePrintTest {
         fabricMeters = fabricMeters,
         fabricUnitPrice = fabricUnitPrice,
         fabricAmount = fabricAmount,
+        fabricName = fabricName,
         totalAmount = totalAmount
     )
 
@@ -170,6 +172,63 @@ class InvoicePrintTest {
 
         val allText = InvoicePrintLayout.buildLines(data).allText()
         assertFalse(allText.contains("پارچه"))
+    }
+
+    // ---- پارچه: مشتری آورده ولی نام پارچه ثبت شده → فقط خط نام می‌آید (بدون مبلغ) ----
+
+    @Test
+    fun `customer provided fabric with name shows name line without amount`() {
+        val inv = invoice(
+            fabricCustomerProvided = true,
+            fabricName = "کرپ گلدار",
+            fabricAmount = 5_000_000, // نباید لحاظ/نمایش داده شود
+            totalAmount = 10_000_000
+        )
+        val items = listOf(
+            InvoiceItem(id = 1, invoiceId = 1, productId = 10, productName = "مبل راحتی", quantity = 1, unitPrice = 10_000_000)
+        )
+        val data = InvoicePrintFormatter.build(inv, items, customer)
+
+        assertNotNull(data.fabricLine)
+        assertTrue(data.fabricLine!!.contains("کرپ گلدار"))
+        assertTrue(data.fabricLine!!.contains("تأمین توسط مشتری"))
+        // مبلغ پارچه در خط نام نمی‌آید
+        assertFalse(data.fabricLine!!.contains("۵٬۰۰۰٬۰۰۰"))
+
+        val allText = InvoicePrintLayout.buildLines(data).allText()
+        assertTrue(allText.contains("پارچه (کرپ گلدار)"))
+    }
+
+    // ---- پارچه: فروشگاه تهیه کرده + نام پارچه → نام در خط مبلغ می‌آید ----
+
+    @Test
+    fun `shop provided fabric with name includes name in fabric line`() {
+        val inv = invoice(
+            fabricMeters = 3.5,
+            fabricUnitPrice = 500_000,
+            fabricAmount = 1_750_000,
+            fabricName = "مخمل کتان",
+            totalAmount = 21_750_000
+        )
+        val data = InvoicePrintFormatter.build(inv, emptyList(), null)
+
+        assertNotNull(data.fabricLine)
+        assertTrue(data.fabricLine!!.contains("مخمل کتان"))
+        assertTrue(data.fabricLine!!.contains("تهیه‌شده توسط فروشگاه"))
+        assertTrue(data.fabricLine!!.contains("۳٫۵"))
+    }
+
+    // ---- نام پارچه خالی/فاصله‌ای → مثل حالت بدون نام رفتار می‌کند ----
+
+    @Test
+    fun `blank fabric name is treated as missing`() {
+        val inv = invoice(
+            fabricCustomerProvided = true,
+            fabricName = "   ",
+            totalAmount = 10_000_000
+        )
+        val data = InvoicePrintFormatter.build(inv, emptyList(), null)
+        assertNull(data.fabricLine)
     }
 
     // ---- بدون پارچه و بدون تخفیف ----

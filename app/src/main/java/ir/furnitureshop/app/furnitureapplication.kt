@@ -3,14 +3,17 @@ package ir.furnitureshop.app
 import android.app.Application
 import ir.furnitureshop.app.data.local.AppDatabase
 import ir.furnitureshop.app.data.local.ProductImageStore
+import ir.furnitureshop.app.data.local.ReceiptImageStore
 import ir.furnitureshop.app.data.repository.CheckRepository
 import ir.furnitureshop.app.data.repository.CustomerRepository
 import ir.furnitureshop.app.data.repository.ExpenseRepository
 import ir.furnitureshop.app.data.repository.InvoiceRepository
+import ir.furnitureshop.app.data.repository.LegacyDebtRepository
 import ir.furnitureshop.app.data.repository.PaymentRepository
 import ir.furnitureshop.app.data.repository.ProductRepository
 import ir.furnitureshop.app.data.repository.SupplierRepository
 import ir.furnitureshop.app.util.CrashLogger
+import ir.furnitureshop.app.util.YearFilter
 
 /**
  * Application class — ساده‌ترین DI دستی (بدون Hilt تا پروژه سبک بماند).
@@ -21,6 +24,8 @@ class FurnitureApplication : Application() {
         super.onCreate()
         // ثبت خطاهای ناگهانی در فایل محلی تا قابل ارسال/تشخیص باشند
         CrashLogger.install(this)
+        // بازیابی سال مالی انتخاب‌شده (پیش‌فرض: سال شمسی جاری)
+        YearFilter.init(this)
     }
 
     val database: AppDatabase by lazy {
@@ -31,6 +36,10 @@ class FurnitureApplication : Application() {
         ProductImageStore(this)
     }
 
+    val receiptImageStore: ReceiptImageStore by lazy {
+        ReceiptImageStore(this)
+    }
+
     val productRepository: ProductRepository by lazy {
         ProductRepository(database.productDao())
     }
@@ -39,7 +48,8 @@ class FurnitureApplication : Application() {
         CustomerRepository(
             customerDao = database.customerDao(),
             invoiceDao = database.invoiceDao(),
-            paymentDao = database.paymentDao()
+            paymentDao = database.paymentDao(),
+            legacyDebtDao = database.legacyDebtDao()
         )
     }
 
@@ -70,5 +80,9 @@ class FurnitureApplication : Application() {
 
     val expenseRepository: ExpenseRepository by lazy {
         ExpenseRepository(database.expenseDao())
+    }
+
+    val legacyDebtRepository: LegacyDebtRepository by lazy {
+        LegacyDebtRepository(database.legacyDebtDao())
     }
 }

@@ -31,6 +31,10 @@ interface CustomerDao {
     @Query("SELECT COUNT(*) FROM invoices WHERE customerId = :customerId")
     suspend fun countInvoices(customerId: Long): Int
 
+    /** تعداد پرداخت‌های مشتری (نقد و چک) — برای جلوگیری از حذف بی‌صدا در CASCADE */
+    @Query("SELECT COUNT(*) FROM payments WHERE customerId = :customerId")
+    suspend fun countPayments(customerId: Long): Int
+
     @Insert
     suspend fun insert(customer: Customer): Long
 

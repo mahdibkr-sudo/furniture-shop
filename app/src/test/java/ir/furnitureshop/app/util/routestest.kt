@@ -46,7 +46,8 @@ class RoutesTest {
             Routes.EXPENSES,
             Routes.EXPENSE_EDIT,
             Routes.EXPENSE_DETAIL,
-            Routes.FINANCIAL_OVERVIEW
+            Routes.FINANCIAL_OVERVIEW,
+            Routes.BACKUP
         )
 
         assertTrue(routes.isNotEmpty())
@@ -90,10 +91,10 @@ class RoutesTest {
         )
     }
 
-    // ---- صفحه اصلی: فقط ۸ ماژول ناوبری ----
+    // ---- صفحه اصلی: فقط ۹ ماژول ناوبری ----
 
     @Test
-    fun `home has exactly the 8 required modules with valid routes`() {
+    fun `home has exactly the 9 required modules with valid routes`() {
         val expectedRoutes = listOf(
             Routes.PRODUCTS,
             Routes.CUSTOMERS,
@@ -102,7 +103,8 @@ class RoutesTest {
             Routes.CHECKS,
             Routes.CASH_PAYMENTS,
             Routes.EXPENSES,
-            Routes.FINANCIAL_OVERVIEW
+            Routes.FINANCIAL_OVERVIEW,
+            Routes.BACKUP
         )
         val expectedTitles = listOf(
             "محصولات",
@@ -112,10 +114,11 @@ class RoutesTest {
             "چک‌ها",
             "پرداخت‌های نقدی",
             "هزینه‌های جانبی",
-            "حساب مالی"
+            "حساب مالی",
+            "پشتیبان‌گیری"
         )
 
-        assertEquals(8, HOME_MODULES.size)
+        assertEquals(9, HOME_MODULES.size)
         assertEquals(expectedTitles, HOME_MODULES.map { it.title })
         assertEquals(expectedRoutes, HOME_MODULES.map { it.route })
 

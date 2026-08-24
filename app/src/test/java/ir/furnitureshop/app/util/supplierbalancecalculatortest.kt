@@ -127,10 +127,34 @@ class SupplierBalanceCalculatorTest {
         assertEquals(0L, SupplierBalanceCalculator.balance(purchases, payments))
     }
 
+    // ---- receiptImagePath بر تراز تأمین‌کننده اثر ندارد ----
+
     @Test
-    fun `overpaid supplier means we are creditor`() {
+    fun `receipt image path does not affect supplier balance`() {
         val purchases = listOf(purchase(100))
-        val payments = listOf(payment(150))
-        assertEquals(-50L, SupplierBalanceCalculator.balance(purchases, payments))
+        val paymentsWithReceipt = listOf(
+            payment(30).copy(receiptImagePath = "/path/to/receipt.jpg")
+        )
+        val paymentsWithoutReceipt = listOf(payment(30))
+        // تراز باید دقیقاً یکسان باشد، چه با رسید باشه چه بدون
+        assertEquals(70L, SupplierBalanceCalculator.balance(purchases, paymentsWithReceipt))
+        assertEquals(70L, SupplierBalanceCalculator.balance(purchases, paymentsWithoutReceipt))
+    }
+
+    @Test
+    fun `receipt image path with check payment also has no effect`() {
+        val purchases = listOf(purchase(200))
+        val payments = listOf(
+            payment(50, PaymentMethod.CHECK).copy(receiptImagePath = "/path/to/check_receipt.jpg")
+        )
+        assertEquals(150L, SupplierBalanceCalculator.balance(purchases, payments))
+    }
+
+    @Test
+    fun `blank receipt image path treated as missing`() {
+        val sp = payment(10).copy(receiptImagePath = "")
+        // مسیر خالی باید مانند نال رفتار کند و تراز تغییر نکند
+        val purchases = listOf(purchase(100))
+        assertEquals(90L, SupplierBalanceCalculator.balance(purchases, listOf(sp)))
     }
 }

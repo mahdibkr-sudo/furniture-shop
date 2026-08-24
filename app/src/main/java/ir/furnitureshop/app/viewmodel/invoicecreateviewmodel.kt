@@ -34,6 +34,7 @@ data class InvoiceCreateUiState(
     val fabricCustomerProvided: Boolean = false,
     val fabricMetersText: String = "",
     val fabricUnitPriceText: String = "",
+    val fabricNameText: String = "",
     val error: String? = null,
     val savedInvoiceId: Long? = null
 ) {
@@ -175,6 +176,11 @@ class InvoiceCreateViewModel(
         _form.update { it.copy(fabricUnitPriceText = DigitNormalizer.digitsOnly(raw), error = null) }
     }
 
+    /** نام پارچه — اختیاری؛ در هر دو حالت تهیه توسط مشتری یا فروشگاه ثبت می‌شود. */
+    fun onFabricNameChange(raw: String) {
+        _form.update { it.copy(fabricNameText = raw, error = null) }
+    }
+
     fun save() {
         if (_form.value.savedInvoiceId != null) return
         val state = _form.value
@@ -204,6 +210,7 @@ class InvoiceCreateViewModel(
                     fabricMeters = state.fabricMeters,
                     fabricUnitPrice = state.fabricUnitPrice,
                     fabricAmount = state.fabricAmount,
+                    fabricName = state.fabricNameText.ifBlank { null },
                     totalAmount = state.total
                 )
                 val items = state.items.map {

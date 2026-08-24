@@ -7,9 +7,12 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import ir.furnitureshop.app.data.dao.PaymentWithCustomer
 import ir.furnitureshop.app.data.repository.PaymentRepository
+import ir.furnitureshop.app.util.YearFilter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -22,13 +25,20 @@ data class CashPaymentListUiState(
         payment.payment.method == ir.furnitureshop.app.data.entity.PaymentMethod.CASH.stored
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CashPaymentListViewModel(
     paymentRepository: PaymentRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<CashPaymentListUiState> =
-        paymentRepository.observeAllCashWithCustomer()
-            .map { payments -> CashPaymentListUiState(payments = payments) }
+        YearFilter.selectedYear.flatMapLatest { year ->
+            paymentRepository.observeAllCashWithCustomer()
+                .map { payments ->
+                    CashPaymentListUiState(
+                        payments = payments.filter { YearFilter.isInYear(it.payment.date, year) }
+                    )
+                }
+        }
             .catch { e -> emit(CashPaymentListUiState(loadError = e.message ?: "خطا در بارگذاری پرداخت‌های نقدی")) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CashPaymentListUiState())
 

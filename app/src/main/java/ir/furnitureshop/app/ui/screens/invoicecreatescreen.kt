@@ -257,6 +257,16 @@ fun InvoiceCreateScreen(navController: NavHostController) {
                 Spacer(Modifier.width(8.dp))
                 Text("پارچه توسط فروشگاه تهیه می‌شود (به فاکتور اضافه می‌شود)")
             }
+            OutlinedTextField(
+                value = uiState.fabricNameText,
+                onValueChange = viewModel::onFabricNameChange,
+                label = { Text("نام پارچه") },
+                placeholder = { Text("اختیاری") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                singleLine = true
+            )
             if (!uiState.fabricCustomerProvided) {
                 Spacer(Modifier.height(4.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {

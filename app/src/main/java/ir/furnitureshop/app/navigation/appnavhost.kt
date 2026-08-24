@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ir.furnitureshop.app.ui.screens.CashPaymentsScreen
 import ir.furnitureshop.app.ui.screens.CheckDetailScreen
+import ir.furnitureshop.app.ui.screens.BackupScreen
 import ir.furnitureshop.app.ui.screens.CheckTransferScreen
 import ir.furnitureshop.app.ui.screens.ChecksScreen
 import ir.furnitureshop.app.ui.screens.CustomerEditScreen
@@ -22,6 +23,7 @@ import ir.furnitureshop.app.ui.screens.HomeScreen
 import ir.furnitureshop.app.ui.screens.InvoiceCreateScreen
 import ir.furnitureshop.app.ui.screens.InvoiceDetailScreen
 import ir.furnitureshop.app.ui.screens.InvoicesScreen
+import ir.furnitureshop.app.ui.screens.LegacyDebtCreateScreen
 import ir.furnitureshop.app.ui.screens.PaymentCreateScreen
 import ir.furnitureshop.app.ui.screens.ProductEditScreen
 import ir.furnitureshop.app.ui.screens.ProductsScreen
@@ -46,6 +48,7 @@ object Routes {
     const val INVOICE_DETAIL = "invoice_detail?invoiceId={invoiceId}"
 
     const val PAYMENT_CREATE = "payment_create?customerId={customerId}"
+    const val LEGACY_DEBT_CREATE = "legacy_debt_create?customerId={customerId}"
 
     const val SUPPLIERS = "suppliers"
     const val SUPPLIER_EDIT = "supplier_edit?supplierId={supplierId}"
@@ -64,6 +67,7 @@ object Routes {
     const val EXPENSE_DETAIL = "expense_detail?expenseId={expenseId}"
 
     const val FINANCIAL_OVERVIEW = "financial_overview"
+    const val BACKUP = "backup"
 
     // --- محصولات ---
     fun productEdit(productId: Long? = null): String =
@@ -83,6 +87,10 @@ object Routes {
     // --- پرداخت ---
     fun paymentCreate(customerId: Long): String =
         "payment_create?customerId=$customerId"
+
+    // --- بدهی قبلی ---
+    fun legacyDebtCreate(customerId: Long): String =
+        "legacy_debt_create?customerId=$customerId"
 
     // --- تأمین‌کنندگان ---
     fun supplierEdit(supplierId: Long? = null): String =
@@ -199,6 +207,19 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             })
         ) { entry ->
             PaymentCreateScreen(
+                navController = navController,
+                customerId = entry.arguments?.getLong("customerId") ?: 0L
+            )
+        }
+
+        // --- بدهی قبلی (سیستم مالی پیشین) ---
+        composable(
+            route = Routes.LEGACY_DEBT_CREATE,
+            arguments = listOf(navArgument("customerId") {
+                type = NavType.LongType
+            })
+        ) { entry ->
+            LegacyDebtCreateScreen(
                 navController = navController,
                 customerId = entry.arguments?.getLong("customerId") ?: 0L
             )
@@ -323,6 +344,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         // --- حساب مالی کلی ---
         composable(Routes.FINANCIAL_OVERVIEW) {
             FinancialOverviewScreen(navController)
+        }
+
+        // --- پشتیبان‌گیری ---
+        composable(Routes.BACKUP) {
+            BackupScreen(navController)
         }
     }
 }
