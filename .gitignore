@@ -1,0 +1,20 @@
+# OS Metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.bak
+*.tmp
+
+# Editor & IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local Development Tools (optional: exclude python build scripts from static hosting if desired)
+# tools/

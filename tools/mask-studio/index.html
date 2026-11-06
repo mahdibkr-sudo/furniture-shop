@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استودیوی ویرایش ماسک مبل | Sofa Mask Studio</title>
+    <style>
+        :root {
+            --bg-base: #121316;
+            --bg-surface: #1a1c23;
+            --bg-surface-elevated: #242731;
+            --bg-toolbar: #1e2029;
+            --border: #2e323e;
+            --border-focus: #4e80ee;
+            --text-main: #f0f2f5;
+            --text-muted: #959ba8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --accent: #f59e0b;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== Top Header Bar ===== */
+        header {
+            height: 60px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            gap: 16px;
+            z-index: 20;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .header-brand .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .product-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-surface-elevated);
+            padding: 4px 10px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .product-select-wrapper label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        select.custom-select {
+            background: transparent;
+            color: var(--text-main);
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        select.custom-select option {
+            background: var(--bg-surface-elevated);
+            color: var(--text-main);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stat-badge {
+            background: var(--bg-surface-elevated);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.84rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+        }
+        .btn-success:hover { background: var(--success-hover); }
+
+        .btn-secondary {
+            background: var(--bg-surface-elevated);
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover { background: #2f3442; }
+
+        .btn-danger {
+            background: transparent;
+            color: #f87171;
+            border-color: #552727;
+        }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.15); }
+
+        /* ===== Main Layout ===== */
+        .workspace {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== Left Toolbar ===== */
+        .toolbar {
+            width: 250px;
+            background: var(--bg-toolbar);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 16px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .tool-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .section-title {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px 6px;
+            background: var(--bg-surface-elevated);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: inherit;
+            transition: all 0.15s ease;
+        }
+
+        .tool-btn .icon {
+            font-size: 1.25rem;
+        }
+
+        .tool-btn:hover {
+            background: #2d313e;
+            color: var(--text-main);
+        }
+
+        .tool-btn.active {
+            background: #1e3a8a;
+            color: #93c5fd;
+            border-color: #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .tool-btn .hotkey {
+            font-size: 0.65rem;
+            opacity: 0.6;
+        }
+
+        /* Slider Controls */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .slider {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #333742;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* Actions group */
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: flex-start;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-action:hover {
+            background: #2e3342;
+        }
+
+        /* ===== Canvas Viewport ===== */
+        .viewport-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #0b0c0e;
+            cursor: crosshair;
+        }
+
+        .canvas-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        #imageCanvas, #maskCanvas, #displayCanvas, #cursorCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Bottom Status & Info Bar */
+        .status-bar {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(26, 28, 35, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .status-item span {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Floating Zoom Controls */
+        .zoom-controls {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(26, 28, 35, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            z-index: 15;
+        }
+
+        .btn-zoom {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-zoom:hover {
+            background: var(--bg-surface-elevated);
+        }
+
+        .zoom-text {
+            font-size: 0.8rem;
+            min-width: 48px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* ===== Right Sidebar (Preview & Swatches) ===== */
+        .sidebar-right {
+            width: 280px;
+            background: var(--bg-toolbar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 16px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .preview-modes {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mode-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-family: inherit;
+            transition: all 0.15s ease;
+        }
+
+        .mode-btn:hover {
+            background: #2b303e;
+            color: var(--text-main);
+        }
+
+        .mode-btn.active {
+            background: #1e3a8a;
+            color: #93c5fd;
+            border-color: #3b82f6;
+        }
+
+        .swatches-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .swatch-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .swatch-card:hover {
+            border-color: var(--primary);
+            background: #2b303d;
+        }
+
+        .swatch-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+            background: #1b263b;
+        }
+
+        .swatch-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+
+        .swatch-title {
+            font-size: 0.74rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 50%;
+            transform: translateX(50%) translateY(100px);
+            background: var(--bg-surface-elevated);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-color: var(--success); color: #34d399; }
+        .toast.error { border-color: var(--danger); color: #f87171; }
+
+        /* Keyboard Helper Modal */
+        .shortcuts-box {
+            background: var(--bg-surface-elevated);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .kbd {
+            background: #14161c;
+            border: 1px solid #373b47;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            color: var(--text-main);
+        }
+    </style>
+    <!-- Try loading project masks-data.js -->
+    <script src="../../js/masks-data.js"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-brand">
+            <span class="logo-icon">🛋️</span>
+            <span>استودیوی ماسک مبل</span>
+            <span style="font-size: 0.75rem; color: #10b981; background: rgba(16,185,129,0.15); padding: 2px 8px; border-radius: 12px;">v1.0 Pro</span>
+        </div>
+
+        <div class="product-select-wrapper">
+            <label for="productSelect">انتخاب مبل:</label>
+            <select id="productSelect" class="custom-select">
+                <option value="1">محصول ۱: مبل راحتی مدل موچی</option>
+                <option value="2" selected>محصول ۲: مبل راحتی مدل رادیس</option>
+                <option value="3">محصول ۳: مبل راحتی مدل ال تانیش</option>
+                <option value="6">محصول ۶: مبل راحتی مدل ایفوریا</option>
+                <option value="7">محصول ۷: مبل تکنفره ست موچی</option>
+                <option value="8">محصول ۸: مبل تکنفره ست ال تانیش</option>
+            </select>
+        </div>
+
+        <div class="header-stats">
+            <div class="stat-badge">ابعاد: <span id="statDimensions">1448 × 1086</span></div>
+            <div class="stat-badge">پیکسل‌های فعال: <span id="statActivePixels">0</span></div>
+        </div>
+
+        <div class="header-actions">
+            <button id="btnRevert" class="btn btn-secondary" title="بازگردانی به ماسک اولیه">🔄 ریست ماسک</button>
+            <button id="btnCopyB64" class="btn btn-secondary" title="کپی کدهای Base64 ماسک">📋 کپی کد</button>
+            <button id="btnDownloadPng" class="btn btn-secondary" title="دانلود فایل PNG ماسک">📥 دانلود ماسک</button>
+            <button id="btnSaveDirect" class="btn btn-success" title="ذخیره مستقیم در فایل masks-data.js پروژه">💾 ذخیره در پروژه</button>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace">
+        
+        <!-- Left Toolbar -->
+        <div class="toolbar">
+            <div class="tool-section">
+                <div class="section-title">ابزارهای ترسیم</div>
+                <div class="tool-grid">
+                    <button class="tool-btn active" data-tool="brush" title="قلم‌مو (B)">
+                        <span class="icon">🖌️</span>
+                        <span>قلم‌مو (افزودن)</span>
+                        <span class="hotkey">[B]</span>
+                    </button>
+                    <button class="tool-btn" data-tool="eraser" title="پاک‌کن (E)">
+                        <span class="icon">🧹</span>
+                        <span>پاک‌کن (حذف)</span>
+                        <span class="hotkey">[E]</span>
+                    </button>
+                    <button class="tool-btn" data-tool="lasso" title="کمند چندضلعی (P)">
+                        <span class="icon">📐</span>
+                        <span>کمند چندضلعی</span>
+                        <span class="hotkey">[P]</span>
+                    </button>
+                    <button class="tool-btn" data-tool="pan" title="جابه‌جایی بوم (Space)">
+                        <span class="icon">✋</span>
+                        <span>جابه‌جایی</span>
+                        <span class="hotkey">[Space]</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <div class="section-title">تنظیمات قلم</div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>اندازه قلم:</span>
+                        <span id="brushSizeVal">35px</span>
+                    </div>
+                    <input type="range" id="brushSize" class="slider" min="2" max="250" value="35">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>میزان نرمی لبه (Hardness):</span>
+                        <span id="brushHardnessVal">80%</span>
+                    </div>
+                    <input type="range" id="brushHardness" class="slider" min="0" max="100" value="80">
+                </div>
+            </div>
+
+            <div class="tool-section" id="lassoActions" style="display: none;">
+                <div class="section-title">عملیات چندضلعی فعال</div>
+                <div class="action-list">
+                    <button id="btnLassoFill" class="btn btn-primary" style="width: 100%;">➕ افزودن این محدوده</button>
+                    <button id="btnLassoErase" class="btn btn-danger" style="width: 100%;">➖ حذف این محدوده (چوب/دیوار)</button>
+                    <button id="btnLassoCancel" class="btn btn-secondary" style="width: 100%;">❌ لغو چندضلعی</button>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <div class="section-title">فیلترها و بهینه‌سازها</div>
+                <div class="action-list">
+                    <button id="btnFillHoles" class="btn btn-action" title="پر کردن سوراخ‌های درون بافت پارچه">🕳️ پر کردن حفره‌های داخلی</button>
+                    <button id="btnSmoothEdges" class="btn btn-action" title="نرم کردن لبه‌های دندانه‌دار (Anti-Alias)">🌫️ نرم‌سازی لبه‌ها (Anti-Alias)</button>
+                    <button id="btnClearMask" class="btn btn-action btn-danger" title="پاک کردن کامل ماسک این محصول">🗑️ پاک‌کردن کل ماسک</button>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <div class="section-title">کلیدهای میانبر</div>
+                <div class="shortcuts-box">
+                    <div class="shortcut-row"><span>قلم‌مو / پاک‌کن</span><span><kbd>B</kbd> / <kbd>E</kbd></span></div>
+                    <div class="shortcut-row"><span>کمند چندضلعی</span><span><kbd>P</kbd></span></div>
+                    <div class="shortcut-row"><span>حرکت روی تصویر</span><span><kbd>Space</kbd> + Drag</span></div>
+                    <div class="shortcut-row"><span>تغییر سایز قلم</span><span><kbd>[</kbd> و <kbd>]</kbd></span></div>
+                    <div class="shortcut-row"><span>بازگشت (Undo)</span><span><kbd>Ctrl+Z</kbd></span></div>
+                    <div class="shortcut-row"><span>انجام مجدد (Redo)</span><span><kbd>Ctrl+Y</kbd></span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Canvas Viewport -->
+        <div class="viewport-container" id="viewport">
+            <div class="canvas-stage" id="canvasStage">
+                <canvas id="imageCanvas"></canvas>
+                <canvas id="maskCanvas"></canvas>
+                <canvas id="displayCanvas"></canvas>
+                <canvas id="cursorCanvas"></canvas>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-item">مختصات: <span id="statCoords">X: 0, Y: 0</span></div>
+                <div class="status-item">رنگ تصویر: <span id="statPixelColor">RGB: -</span></div>
+                <div class="status-item">مقدار آلفا: <span id="statAlphaVal">-</span></div>
+            </div>
+
+            <div class="zoom-controls">
+                <button class="btn-zoom" id="btnZoomOut" title="کوچک‌نمایی">−</button>
+                <span class="zoom-text" id="zoomText">100%</span>
+                <button class="btn-zoom" id="btnZoomIn" title="بزرگ‌نمایی">+</button>
+                <button class="btn-zoom" id="btnZoomReset" title="اندازه واقعی">⊡</button>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Preview & Live Recoloring) -->
+        <div class="sidebar-right">
+            <div class="tool-section">
+                <div class="section-title">حالت نمایش بوم</div>
+                <div class="preview-modes">
+                    <button class="mode-btn active" data-mode="recolor">
+                        <span>🎨</span>
+                        <span>پیش‌نمایش زنده رنگ پارچه</span>
+                    </button>
+                    <button class="mode-btn" data-mode="overlay">
+                        <span>🔴</span>
+                        <span>ماسک رنگی روی تصویر (Overlay)</span>
+                    </button>
+                    <button class="mode-btn" data-mode="maskOnly">
+                        <span>⬛</span>
+                        <span>فقط ماسک (سیاه و سفید)</span>
+                    </button>
+                    <button class="mode-btn" data-mode="original">
+                        <span>🖼️</span>
+                        <span>فقط عکس اصلی (بدون ماسک)</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <div class="section-title">تست زنده رنگ پارچه</div>
+                <div class="swatches-grid" id="swatchesContainer">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <div class="section-title">تنظیمات پیش‌نمایش</div>
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>شفافیت اعمال رنگ:</span>
+                        <span id="previewOpacityVal">96%</span>
+                    </div>
+                    <input type="range" id="previewOpacity" class="slider" min="10" max="100" value="96">
+                </div>
+            </div>
+
+            <div class="tool-section" style="margin-top: auto; padding-top: 10px;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; background: rgba(255,255,255,0.03); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    💡 <strong>راهنمای سریع:</strong> با کمند چندضلعی (<kbd>P</kbd>) به راحتی دور پایه‌ها، میز کنسول یا شلف‌ها را خط بکشید و دکمه <em>«حذف این محدوده»</em> را بزنید تا خطوط صاف و بدون نشت رنگ ایجاد شوند.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">پیام سیستم</div>
+
+    <script>
+        // Project catalog fabric colors
+        const FABRIC_COLORS = [
+            { id: 'navy', name: 'سرمه‌ای کلاسیک', hex: '#293B52' },
+            { id: 'emerald', name: 'سبز یشمی سلطنتی', hex: '#3D5948' },
+            { id: 'mocha', name: 'قهوه‌ای موکا', hex: '#9E7453' },
+            { id: 'mustard', name: 'خردلی کتان', hex: '#CCA046' },
+            { id: 'burgundy', name: 'زرشکی مخملی', hex: '#7A2D35' },
+            { id: 'dark-grey', name: 'طوسی ذغالی شیک', hex: '#53565C' },
+            { id: 'chocolate', name: 'شکلاتی گرم', hex: '#63402A' },
+            { id: 'light-brown', name: 'قهوه‌ای شنی', hex: '#C89B6D' },
+            { id: 'soft-grey', name: 'طوسی فیلی', hex: '#9FA3A8' },
+        ];
+
+        // State
+        const state = {
+            productId: 2,
+            currentTool: 'brush', // 'brush', 'eraser', 'lasso', 'pan'
+            brushSize: 35,
+            brushHardness: 0.8,
+            activeColor: FABRIC_COLORS[0].hex,
+            previewMode: 'recolor', // 'recolor', 'overlay', 'maskOnly', 'original'
+            previewOpacity: 0.96,
+            zoom: 1.0,
+            panX: 0,
+            panY: 0,
+            isPanning: false,
+            panStartX: 0,
+            panStartY: 0,
+            isDrawing: false,
+            lastX: 0,
+            lastY: 0,
+            lassoPoints: [],
+            history: [],
+            historyIndex: -1,
+            maxHistory: 20
+        };
+
+        // DOM elements
+        const viewport = document.getElementById('viewport');
+        const canvasStage = document.getElementById('canvasStage');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const maskCanvas = document.getElementById('maskCanvas');
+        const displayCanvas = document.getElementById('displayCanvas');
+        const cursorCanvas = document.getElementById('cursorCanvas');
+
+        const ctxImg = imageCanvas.getContext('2d');
+        const ctxMask = maskCanvas.getContext('2d', { willReadFrequently: true });
+        const ctxDisplay = displayCanvas.getContext('2d');
+        const ctxCursor = cursorCanvas.getContext('2d');
+
+        const productSelect = document.getElementById('productSelect');
+        const brushSizeInput = document.getElementById('brushSize');
+        const brushSizeVal = document.getElementById('brushSizeVal');
+        const brushHardnessInput = document.getElementById('brushHardness');
+        const brushHardnessVal = document.getElementById('brushHardnessVal');
+        const lassoActions = document.getElementById('lassoActions');
+        const statCoords = document.getElementById('statCoords');
+        const statPixelColor = document.getElementById('statPixelColor');
+        const statAlphaVal = document.getElementById('statAlphaVal');
+        const statActivePixels = document.getElementById('statActivePixels');
+        const statDimensions = document.getElementById('statDimensions');
+        const zoomText = document.getElementById('zoomText');
+
+        let baseImage = new Image();
+        let originalMaskUri = '';
+
+        // Initialize Swatches
+        const swatchesContainer = document.getElementById('swatchesContainer');
+        FABRIC_COLORS.forEach((sw, idx) => {
+            const card = document.createElement('div');
+            card.className = 'swatch-card' + (idx === 0 ? ' active' : '');
+            card.innerHTML = `
+                <div class="swatch-circle" style="background: ${sw.hex};"></div>
+                <span class="swatch-title">${sw.name}</span>
+            `;
+            card.onclick = () => {
+                document.querySelectorAll('.swatch-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                state.activeColor = sw.hex;
+                renderDisplay();
+            };
+            swatchesContainer.appendChild(card);
+        });
+
+        // Product Catalog with exact image mappings (matching js/script.js)
+        const PRODUCT_CATALOG = {
+            1: { id: 1, name: 'مبل راحتی مدل موچی', image: 'product-1.webp' },
+            2: { id: 2, name: 'مبل راحتی مدل رادیس', image: 'product-2.webp' },
+            3: { id: 3, name: 'مبل راحتی مدل ال تانیش', image: 'product-3.webp' },
+            6: { id: 6, name: 'مبل راحتی مدل ایفوریا', image: 'product-4.webp' },
+            7: { id: 7, name: 'مبل تکنفره ست موچی', image: 'product-5.webp' },
+            8: { id: 8, name: 'مبل تکنفره ست ال تانیش', image: 'product-6.webp' },
+        };
+
+        // Initialize Product
+        function loadProduct(pid) {
+            state.productId = pid;
+            const pInfo = PRODUCT_CATALOG[pid] || { image: `product-${pid}.webp` };
+            const imgPath = `../../images/${pInfo.image}`;
+            baseImage = new Image();
+            baseImage.crossOrigin = 'anonymous';
+            baseImage.onload = () => {
+                const w = baseImage.naturalWidth;
+                const h = baseImage.naturalHeight;
+                statDimensions.textContent = `${w} × ${h}`;
+
+                [imageCanvas, maskCanvas, displayCanvas, cursorCanvas].forEach(c => {
+                    c.width = w;
+                    c.height = h;
+                });
+                canvasStage.style.width = w + 'px';
+                canvasStage.style.height = h + 'px';
+
+                // Draw base image
+                ctxImg.drawImage(baseImage, 0, 0);
+
+                // Load existing mask if available
+                loadMaskFromData(pid, w, h);
+
+                // Fit to view
+                resetZoom();
+            };
+            baseImage.onerror = () => {
+                showToast(`عکس محصول product-${pid}.webp یافت نشد!`, 'error');
+            };
+            baseImage.src = imgPath;
+        }
+
+        function loadMaskFromData(pid, w, h) {
+            ctxMask.clearRect(0, 0, w, h);
+            const masks = (typeof sofaMasks !== 'undefined' && sofaMasks) ? sofaMasks : (window.sofaMasks || {});
+            const maskUri = masks[pid];
+            originalMaskUri = maskUri || '';
+
+            if (maskUri) {
+                const mImg = new Image();
+                mImg.onload = () => {
+                    ctxMask.drawImage(mImg, 0, 0, w, h);
+                    saveHistoryState();
+                    renderDisplay();
+                    updateStats();
+                };
+                mImg.src = maskUri;
+            } else {
+                saveHistoryState();
+                renderDisplay();
+                updateStats();
+            }
+        }
+
+        // Render Display Canvas based on view mode
+        function renderDisplay() {
+            const w = displayCanvas.width;
+            const h = displayCanvas.height;
+            if (w === 0 || h === 0) return;
+
+            ctxDisplay.clearRect(0, 0, w, h);
+
+            if (state.previewMode === 'original') {
+                ctxDisplay.drawImage(imageCanvas, 0, 0);
+                return;
+            }
+
+            if (state.previewMode === 'maskOnly') {
+                // Black and white
+                const maskData = ctxMask.getImageData(0, 0, w, h);
+                const dispData = ctxDisplay.createImageData(w, h);
+                const m = maskData.data;
+                const d = dispData.data;
+                for (let i = 0; i < m.length; i += 4) {
+                    const a = m[i + 3];
+                    d[i] = a;
+                    d[i + 1] = a;
+                    d[i + 2] = a;
+                    d[i + 3] = 255;
+                }
+                ctxDisplay.putImageData(dispData, 0, 0);
+                return;
+            }
+
+            if (state.previewMode === 'overlay') {
+                // Base image + semi-transparent Cyan mask
+                ctxDisplay.drawImage(imageCanvas, 0, 0);
+                
+                const maskData = ctxMask.getImageData(0, 0, w, h);
+                const baseData = ctxImg.getImageData(0, 0, w, h);
+                const outData = ctxDisplay.getImageData(0, 0, w, h);
+                const m = maskData.data;
+                const b = baseData.data;
+                const o = outData.data;
+
+                for (let i = 0; i < m.length; i += 4) {
+                    const a = m[i + 3] / 255.0;
+                    if (a > 0.02) {
+                        const alphaBlend = a * 0.65;
+                        o[i] = Math.round(b[i] * (1 - alphaBlend) + 0 * alphaBlend);
+                        o[i + 1] = Math.round(b[i + 1] * (1 - alphaBlend) + 210 * alphaBlend);
+                        o[i + 2] = Math.round(b[i + 2] * (1 - alphaBlend) + 255 * alphaBlend);
+                    }
+                }
+                ctxDisplay.putImageData(outData, 0, 0);
+                return;
+            }
+
+            if (state.previewMode === 'recolor') {
+                // Native CSS color blend mode simulation
+                ctxDisplay.drawImage(imageCanvas, 0, 0);
+                
+                // Color overlay canvas
+                const tempC = document.createElement('canvas');
+                tempC.width = w;
+                tempC.height = h;
+                const tCtx = tempC.getContext('2d');
+                
+                // Fill with active color
+                tCtx.fillStyle = state.activeColor;
+                tCtx.fillRect(0, 0, w, h);
+                
+                // Mask the color using destination-in
+                tCtx.globalCompositeOperation = 'destination-in';
+                tCtx.drawImage(maskCanvas, 0, 0);
+                
+                // Blend onto display with 'color' blend mode
+                ctxDisplay.save();
+                ctxDisplay.globalCompositeOperation = 'color';
+                ctxDisplay.globalAlpha = state.previewOpacity;
+                ctxDisplay.drawImage(tempC, 0, 0);
+                ctxDisplay.restore();
+            }
+        }
+
+        // Draw dynamic brush cursor and lasso preview
+        function renderCursor(canvasX = -1, canvasY = -1) {
+            const w = cursorCanvas.width;
+            const h = cursorCanvas.height;
+            ctxCursor.clearRect(0, 0, w, h);
+
+            // Draw Lasso polygon if active
+            if (state.lassoPoints.length > 0) {
+                ctxCursor.beginPath();
+                ctxCursor.moveTo(state.lassoPoints[0].x, state.lassoPoints[0].y);
+                for (let i = 1; i < state.lassoPoints.length; i++) {
+                    ctxCursor.lineTo(state.lassoPoints[i].x, state.lassoPoints[i].y);
+                }
+                if (canvasX >= 0) {
+                    ctxCursor.lineTo(canvasX, canvasY);
+                }
+                ctxCursor.strokeStyle = '#f59e0b';
+                ctxCursor.lineWidth = 2 / state.zoom;
+                ctxCursor.setLineDash([6 / state.zoom, 4 / state.zoom]);
+                ctxCursor.stroke();
+                ctxCursor.setLineDash([]);
+
+                // Draw points
+                state.lassoPoints.forEach((pt, i) => {
+                    ctxCursor.beginPath();
+                    ctxCursor.arc(pt.x, pt.y, 4 / state.zoom, 0, Math.PI * 2);
+                    ctxCursor.fillStyle = i === 0 ? '#10b981' : '#f59e0b';
+                    ctxCursor.fill();
+                    ctxCursor.strokeStyle = '#fff';
+                    ctxCursor.lineWidth = 1.5 / state.zoom;
+                    ctxCursor.stroke();
+                });
+            }
+
+            // Draw Brush Circle
+            if (canvasX >= 0 && (state.currentTool === 'brush' || state.currentTool === 'eraser')) {
+                const radius = state.brushSize / 2;
+                ctxCursor.beginPath();
+                ctxCursor.arc(canvasX, canvasY, radius, 0, Math.PI * 2);
+                ctxCursor.strokeStyle = state.currentTool === 'brush' ? 'rgba(59, 130, 246, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+                ctxCursor.lineWidth = 1.5 / state.zoom;
+                ctxCursor.stroke();
+
+                // Inner hardness circle
+                if (state.brushHardness < 0.95) {
+                    ctxCursor.beginPath();
+                    ctxCursor.arc(canvasX, canvasY, radius * state.brushHardness, 0, Math.PI * 2);
+                    ctxCursor.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctxCursor.lineWidth = 1 / state.zoom;
+                    ctxCursor.setLineDash([3 / state.zoom, 3 / state.zoom]);
+                    ctxCursor.stroke();
+                    ctxCursor.setLineDash([]);
+                }
+            }
+        }
+
+        // Apply Brush Stamp / Stroke onto maskCanvas
+        function drawBrushLine(x0, y0, x1, y1) {
+            const dist = Math.hypot(x1 - x0, y1 - y0);
+            const step = Math.max(1, state.brushSize * 0.15);
+            const steps = Math.ceil(dist / step);
+
+            for (let i = 0; i <= steps; i++) {
+                const t = steps === 0 ? 0 : i / steps;
+                const x = x0 + (x1 - x0) * t;
+                const y = y0 + (y1 - y0) * t;
+                drawBrushStamp(x, y);
+            }
+        }
+
+        function drawBrushStamp(cx, cy) {
+            const r = state.brushSize / 2;
+            const isErase = state.currentTool === 'eraser';
+
+            const grad = ctxMask.createRadialGradient(cx, cy, r * state.brushHardness, cx, cy, r);
+            if (isErase) {
+                grad.addColorStop(0, 'rgba(0,0,0,1)');
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctxMask.globalCompositeOperation = 'destination-out';
+            } else {
+                grad.addColorStop(0, 'rgba(0,0,0,1)');
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctxMask.globalCompositeOperation = 'source-over';
+            }
+
+            ctxMask.fillStyle = grad;
+            ctxMask.beginPath();
+            ctxMask.arc(cx, cy, r, 0, Math.PI * 2);
+            ctxMask.fill();
+        }
+
+        // Polygon Lasso Fill / Erase
+        function applyLasso(mode = 'erase') {
+            if (state.lassoPoints.length < 3) return;
+
+            ctxMask.save();
+            ctxMask.beginPath();
+            ctxMask.moveTo(state.lassoPoints[0].x, state.lassoPoints[0].y);
+            for (let i = 1; i < state.lassoPoints.length; i++) {
+                ctxMask.lineTo(state.lassoPoints[i].x, state.lassoPoints[i].y);
+            }
+            ctxMask.closePath();
+
+            if (mode === 'erase') {
+                ctxMask.globalCompositeOperation = 'destination-out';
+                ctxMask.fillStyle = 'rgba(0,0,0,1)';
+                ctxMask.fill();
+            } else {
+                ctxMask.globalCompositeOperation = 'source-over';
+                ctxMask.fillStyle = 'rgba(0,0,0,1)';
+                ctxMask.fill();
+            }
+            ctxMask.restore();
+
+            state.lassoPoints = [];
+            lassoActions.style.display = 'none';
+            renderCursor();
+            renderDisplay();
+            saveHistoryState();
+            updateStats();
+        }
+
+        // Smart Filters: Fill Holes
+        document.getElementById('btnFillHoles').onclick = () => {
+            const w = maskCanvas.width;
+            const h = maskCanvas.height;
+            const imgData = ctxMask.getImageData(0, 0, w, h);
+            const d = imgData.data;
+
+            // Simple flood fill exterior on a padded grid
+            const grid = new Uint8Array(w * h);
+            for (let i = 0; i < grid.length; i++) {
+                grid[i] = d[i * 4 + 3] > 64 ? 1 : 0;
+            }
+
+            // Flood fill from border
+            const visited = new Uint8Array(w * h);
+            const queue = [];
+
+            // Add all borders
+            for (let x = 0; x < w; x++) {
+                if (grid[x] === 0) { visited[x] = 1; queue.push(x); }
+                const bottomIdx = (h - 1) * w + x;
+                if (grid[bottomIdx] === 0) { visited[bottomIdx] = 1; queue.push(bottomIdx); }
+            }
+            for (let y = 0; y < h; y++) {
+                const leftIdx = y * w;
+                if (grid[leftIdx] === 0 && !visited[leftIdx]) { visited[leftIdx] = 1; queue.push(leftIdx); }
+                const rightIdx = y * w + (w - 1);
+                if (grid[rightIdx] === 0 && !visited[rightIdx]) { visited[rightIdx] = 1; queue.push(rightIdx); }
+            }
+
+            let head = 0;
+            while (head < queue.length) {
+                const idx = queue[head++];
+                const cx = idx % w;
+                const cy = (idx / w) | 0;
+
+                const nbs = [];
+                if (cx > 0) nbs.push(idx - 1);
+                if (cx < w - 1) nbs.push(idx + 1);
+                if (cy > 0) nbs.push(idx - w);
+                if (cy < h - 1) nbs.push(idx + w);
+
+                for (let i = 0; i < nbs.length; i++) {
+                    const n = nbs[i];
+                    if (!visited[n] && grid[n] === 0) {
+                        visited[n] = 1;
+                        queue.push(n);
+                    }
+                }
+            }
+
+            // Any cell that is 0 and NOT visited is an internal hole -> fill it!
+            let filledCount = 0;
+            for (let i = 0; i < grid.length; i++) {
+                if (grid[i] === 0 && !visited[i]) {
+                    d[i * 4 + 3] = 255;
+                    filledCount++;
+                }
+            }
+
+            ctxMask.putImageData(imgData, 0, 0);
+            renderDisplay();
+            saveHistoryState();
+            updateStats();
+            showToast(`تعداد ${filledCount} پیکسل حفره با موفقیت پر شد!`, 'success');
+        };
+
+        // Smart Filters: Smooth Edges (Anti-Aliasing)
+        document.getElementById('btnSmoothEdges').onclick = () => {
+            const w = maskCanvas.width;
+            const h = maskCanvas.height;
+            
+            // Box blur using layered canvas
+            const temp = document.createElement('canvas');
+            temp.width = w;
+            temp.height = h;
+            const tCtx = temp.getContext('2d');
+            
+            tCtx.filter = 'blur(1px)';
+            tCtx.drawImage(maskCanvas, 0, 0);
+
+            ctxMask.clearRect(0, 0, w, h);
+            ctxMask.drawImage(temp, 0, 0);
+
+            renderDisplay();
+            saveHistoryState();
+            updateStats();
+            showToast('لبه‌های ماسک نرم و بهینه‌سازی شدند!', 'success');
+        };
+
+        // Clear All
+        document.getElementById('btnClearMask').onclick = () => {
+            if (confirm('آیا از پاک کردن کل ماسک این مبل اطمینان دارید؟')) {
+                ctxMask.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+                renderDisplay();
+                saveHistoryState();
+                updateStats();
+                showToast('کل ماسک پاک شد.', 'info');
+            }
+        };
+
+        // Revert to original
+        document.getElementById('btnRevert').onclick = () => {
+            if (confirm('آیا مایلید تغییرات لغو شده و ماسک ذخیره شده اولیه بازگردد؟')) {
+                loadMaskFromData(state.productId, maskCanvas.width, maskCanvas.height);
+                showToast('ماسک به نسخه اولیه بازگردانی شد.', 'info');
+            }
+        };
+
+        // Stats
+        function updateStats() {
+            const w = maskCanvas.width;
+            const h = maskCanvas.height;
+            if (w === 0) return;
+            const imgData = ctxMask.getImageData(0, 0, w, h);
+            const d = imgData.data;
+            let active = 0;
+            for (let i = 3; i < d.length; i += 4) {
+                if (d[i] > 10) active++;
+            }
+            statActivePixels.textContent = active.toLocaleString('fa-IR');
+        }
+
+        // History (Undo / Redo)
+        function saveHistoryState() {
+            if (maskCanvas.width === 0) return;
+            const imgData = ctxMask.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+            
+            // Trim forward history
+            if (state.historyIndex < state.history.length - 1) {
+                state.history = state.history.slice(0, state.historyIndex + 1);
+            }
+            state.history.push(imgData);
+            if (state.history.length > state.maxHistory) {
+                state.history.shift();
+            }
+            state.historyIndex = state.history.length - 1;
+        }
+
+        function undo() {
+            if (state.historyIndex > 0) {
+                state.historyIndex--;
+                ctxMask.putImageData(state.history[state.historyIndex], 0, 0);
+                renderDisplay();
+                updateStats();
+                showToast('Undo انجام شد', 'info');
+            }
+        }
+
+        function redo() {
+            if (state.historyIndex < state.history.length - 1) {
+                state.historyIndex++;
+                ctxMask.putImageData(state.history[state.historyIndex], 0, 0);
+                renderDisplay();
+                updateStats();
+                showToast('Redo انجام شد', 'info');
+            }
+        }
+
+        // Zoom & Pan
+        function updateTransform() {
+            canvasStage.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+            zoomText.textContent = Math.round(state.zoom * 100) + '%';
+        }
+
+        function resetZoom() {
+            const vpW = viewport.clientWidth;
+            const vpH = viewport.clientHeight;
+            const cW = imageCanvas.width || 1448;
+            const cH = imageCanvas.height || 1086;
+
+            const scale = Math.min((vpW - 40) / cW, (vpH - 40) / cH, 1.0);
+            state.zoom = Math.max(0.2, scale);
+            state.panX = Math.round((vpW - cW * state.zoom) / 2);
+            state.panY = Math.round((vpH - cH * state.zoom) / 2);
+            updateTransform();
+        }
+
+        viewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const rect = viewport.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const zoomFactor = e.deltaY < 0 ? 1.15 : 0.87;
+            const newZoom = Math.min(Math.max(0.1, state.zoom * zoomFactor), 12.0);
+
+            state.panX = mouseX - (mouseX - state.panX) * (newZoom / state.zoom);
+            state.panY = mouseY - (mouseY - state.panY) * (newZoom / state.zoom);
+            state.zoom = newZoom;
+
+            updateTransform();
+            renderCursor();
+        }, { passive: false });
+
+        document.getElementById('btnZoomIn').onclick = () => {
+            state.zoom = Math.min(state.zoom * 1.25, 12.0);
+            updateTransform();
+        };
+        document.getElementById('btnZoomOut').onclick = () => {
+            state.zoom = Math.max(state.zoom * 0.8, 0.1);
+            updateTransform();
+        };
+        document.getElementById('btnZoomReset').onclick = resetZoom;
+
+        // Mouse canvas coordinates
+        function getCanvasCoords(e) {
+            const rect = canvasStage.getBoundingClientRect();
+            const cx = (e.clientX - rect.left) / state.zoom;
+            const cy = (e.clientY - rect.top) / state.zoom;
+            return {
+                x: Math.round(cx),
+                y: Math.round(cy)
+            };
+        }
+
+        // Viewport Mouse Events
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.button === 1 || state.currentTool === 'pan' || e.spaceKey) {
+                state.isPanning = true;
+                state.panStartX = e.clientX - state.panX;
+                state.panStartY = e.clientY - state.panY;
+                return;
+            }
+
+            if (e.button === 0) {
+                const pt = getCanvasCoords(e);
+                if (state.currentTool === 'brush' || state.currentTool === 'eraser') {
+                    state.isDrawing = true;
+                    state.lastX = pt.x;
+                    state.lastY = pt.y;
+                    drawBrushStamp(pt.x, pt.y);
+                    renderDisplay();
+                } else if (state.currentTool === 'lasso') {
+                    state.lassoPoints.push(pt);
+                    lassoActions.style.display = 'flex';
+                    renderCursor(pt.x, pt.y);
+                }
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (state.isPanning) {
+                state.panX = e.clientX - state.panStartX;
+                state.panY = e.clientY - state.panStartY;
+                updateTransform();
+                return;
+            }
+
+            const pt = getCanvasCoords(e);
+            statCoords.textContent = `X: ${pt.x}, Y: ${pt.y}`;
+
+            // Pixel color & alpha
+            if (pt.x >= 0 && pt.x < imageCanvas.width && pt.y >= 0 && pt.y < imageCanvas.height) {
+                const p = ctxImg.getImageData(pt.x, pt.y, 1, 1).data;
+                const m = ctxMask.getImageData(pt.x, pt.y, 1, 1).data;
+                statPixelColor.textContent = `RGB: ${p[0]}, ${p[1]}, ${p[2]}`;
+                statAlphaVal.textContent = `${m[3]} / 255`;
+            }
+
+            renderCursor(pt.x, pt.y);
+
+            if (state.isDrawing && (state.currentTool === 'brush' || state.currentTool === 'eraser')) {
+                drawBrushLine(state.lastX, state.lastY, pt.x, pt.y);
+                state.lastX = pt.x;
+                state.lastY = pt.y;
+                renderDisplay();
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (state.isPanning) {
+                state.isPanning = false;
+            }
+            if (state.isDrawing) {
+                state.isDrawing = false;
+                saveHistoryState();
+                updateStats();
+            }
+        });
+
+        // Double click closes lasso
+        viewport.addEventListener('dblclick', (e) => {
+            if (state.currentTool === 'lasso' && state.lassoPoints.length >= 3) {
+                applyLasso('erase'); // Default to erase
+            }
+        });
+
+        // Lasso Actions Buttons
+        document.getElementById('btnLassoFill').onclick = () => applyLasso('fill');
+        document.getElementById('btnLassoErase').onclick = () => applyLasso('erase');
+        document.getElementById('btnLassoCancel').onclick = () => {
+            state.lassoPoints = [];
+            lassoActions.style.display = 'none';
+            renderCursor();
+        };
+
+        // Tool Selection
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.currentTool = btn.dataset.tool;
+                viewport.style.cursor = state.currentTool === 'pan' ? 'grab' : 'crosshair';
+                renderCursor();
+            };
+        });
+
+        // View Mode Selection
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.previewMode = btn.dataset.mode;
+                renderDisplay();
+            };
+        });
+
+        // Sliders
+        brushSizeInput.oninput = (e) => {
+            state.brushSize = parseInt(e.target.value);
+            brushSizeVal.textContent = state.brushSize + 'px';
+            renderCursor();
+        };
+
+        brushHardnessInput.oninput = (e) => {
+            state.brushHardness = parseInt(e.target.value) / 100.0;
+            brushHardnessVal.textContent = e.target.value + '%';
+            renderCursor();
+        };
+
+        document.getElementById('previewOpacity').oninput = (e) => {
+            state.previewOpacity = parseInt(e.target.value) / 100.0;
+            document.getElementById('previewOpacityVal').textContent = e.target.value + '%';
+            renderDisplay();
+        };
+
+        // Product Switch
+        productSelect.onchange = (e) => {
+            loadProduct(parseInt(e.target.value));
+        };
+
+        // Export & Save
+        function getMaskDataUri() {
+            return maskCanvas.toDataURL('image/png');
+        }
+
+        document.getElementById('btnCopyB64').onclick = () => {
+            const uri = getMaskDataUri();
+            navigator.clipboard.writeText(uri).then(() => {
+                showToast('کد ماسک در کلیپ‌بورد کپی شد!', 'success');
+            }).catch(() => {
+                showToast('خطا در کپی کلیپ‌بورد', 'error');
+            });
+        };
+
+        document.getElementById('btnDownloadPng').onclick = () => {
+            const uri = getMaskDataUri();
+            const a = document.createElement('a');
+            a.href = uri;
+            a.download = `product-${state.productId}-mask.png`;
+            a.click();
+            showToast('دانلود تصویر ماسک آغاز شد.', 'success');
+        };
+
+        document.getElementById('btnSaveDirect').onclick = async () => {
+            const saveBtn = document.getElementById('btnSaveDirect');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ در حال ذخیره...';
+
+            const uri = getMaskDataUri();
+
+            try {
+                const res = await fetch('/api/save-mask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: state.productId,
+                        maskDataUri: uri
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || 'با موفقیت در masks-data.js ذخیره شد!', 'success');
+                } else {
+                    throw new Error(data.error || 'خطا در ذخیره');
+                }
+            } catch (err) {
+                console.warn('Direct server save failed:', err);
+                showToast('سرور ذخیره در دسترس نیست. کد ماسک کپی شد و فایل دانلود می‌شود.', 'info');
+                document.getElementById('btnCopyB64').click();
+                document.getElementById('btnDownloadPng').click();
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 ذخیره در پروژه';
+            }
+        };
+
+        // Keyboard Shortcuts
+        window.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+            if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                undo();
+            } else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                redo();
+            } else if (e.key.toLowerCase() === 'b') {
+                document.querySelector('[data-tool="brush"]').click();
+            } else if (e.key.toLowerCase() === 'e') {
+                document.querySelector('[data-tool="eraser"]').click();
+            } else if (e.key.toLowerCase() === 'p') {
+                document.querySelector('[data-tool="lasso"]').click();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                state.spaceKey = true;
+                viewport.style.cursor = 'grab';
+            } else if (e.key === '[') {
+                brushSizeInput.value = Math.max(2, state.brushSize - 5);
+                brushSizeInput.dispatchEvent(new Event('input'));
+            } else if (e.key === ']') {
+                brushSizeInput.value = Math.min(250, state.brushSize + 5);
+                brushSizeInput.dispatchEvent(new Event('input'));
+            } else if (e.key === 'Enter' && state.lassoPoints.length >= 3) {
+                applyLasso('erase');
+            } else if (e.key === 'Escape' && state.lassoPoints.length > 0) {
+                state.lassoPoints = [];
+                lassoActions.style.display = 'none';
+                renderCursor();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === ' ') {
+                state.spaceKey = false;
+                viewport.style.cursor = state.currentTool === 'pan' ? 'grab' : 'crosshair';
+            }
+        });
+
+        // Toast Helper
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast show ${type}`;
+            clearTimeout(toast.timer);
+            toast.timer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/products')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.products && data.products.length > 0) {
+                        productSelect.innerHTML = '';
+                        data.products.forEach(p => {
+                            const opt = document.createElement('option');
+                            opt.value = p.id;
+                            opt.textContent = `محصول ${p.id}: ${p.name || ''}${p.hasMask ? ' (دارای ماسک)' : ''}`;
+                            if (p.id === 2) opt.selected = true;
+                            productSelect.appendChild(opt);
+                        });
+                    }
+                })
+                .catch(() => {})
+                .finally(() => {
+                    loadProduct(parseInt(productSelect.value) || 2);
+                });
+        });
+    </script>
+</body>
+</html>

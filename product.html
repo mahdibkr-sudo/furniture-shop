@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="جزئیات محصول - مبلمان میراکل">
+    <meta name="theme-color" content="#FAF6F0">
+    <!-- Open Graph / SEO -->
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="جزئیات محصول | مبلمان میراکل">
+    <meta property="og:description" content="مشاهده جزئیات، مشخصات و پیش‌نمایش زنده رنگ‌های پارچه مبلمان میراکل">
+    <meta property="og:image" content="images/product-1.webp">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:site_name" content="مبلمان میراکل">
+    <!-- Font Preloads for Instant Render -->
+    <link rel="preload" href="fonts/vazirmatn-arabic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/markazitext-arabic.woff2" as="font" type="font/woff2" crossorigin>
+    <title>جزئیات محصول | مبلمان میراکل</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/styles.css?v=4">
+    <noscript>
+        <style>
+            .reveal, .reveal-left, .reveal-right, .reveal-scale {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        </style>
+    </noscript>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <a href="index.html" class="nav-logo">
+                <span class="nav-logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                        <polyline points="6 9 6 21 18 21 18 9"/>
+                    </svg>
+                </span>
+                <span>مبلمان میراکل</span>
+            </a>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">خانه</a></li>
+                <li><a href="index.html#catalog" class="nav-link">کاتالوگ</a></li>
+                <li><a href="index.html#coffee-tables" class="nav-link">میز جلو مبلی</a></li>
+                <li><a href="blog.html" class="nav-link">وبلاگ</a></li>
+                <li><a href="contact.html" class="nav-link">تماس</a></li>
+            </ul>
+
+            <a href="contact.html" class="btn btn-primary nav-cta">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>درخواست مشاوره</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Product Hero / Breadcrumb -->
+    <section class="product-hero" aria-labelledby="product-title">
+        <div class="container">
+            <nav class="product-breadcrumb" aria-label="مسیر راهنما">
+                <a href="index.html">خانه</a>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                <a href="index.html#catalog">کاتالوگ</a>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                <span id="productBreadcrumbTitle">نام محصول</span>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Product Main Content -->
+    <main class="product-main" id="productMain">
+        <div class="container">
+            <div class="product-gallery">
+                <!-- Main Image -->
+                <div class="product-main-image" id="mainImageContainer">
+                    <img id="mainImage" src="" alt="" loading="eager" fetchpriority="high">
+                    <div id="fabricOverlay" class="fabric-overlay" aria-hidden="true"></div>
+                    <div id="fabricLiveBadge" class="fabric-live-badge" style="display: none;">
+                        <span class="live-dot"></span>
+                        <span id="fabricLiveText">پیش‌نمایش زنده پارچه</span>
+                    </div>
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="product-thumbnails" id="thumbnailsContainer" role="list" aria-label="تصاویر محصول">
+                    <!-- Thumbnails will be rendered by JavaScript -->
+                </div>
+            </div>
+
+            <div class="product-info">
+                <p class="product-category" id="productCategory">دسته‌بندی</p>
+                <h1 class="product-title" id="productTitle">نام محصول</h1>
+
+                <div class="product-description" id="productDescription">
+                    <!-- Description will be rendered by JavaScript -->
+                </div>
+
+                <!-- Interactive Color Customizer -->
+                <div class="product-color-customizer" id="colorCustomizer" style="display: none;">
+                    <div class="color-customizer-header">
+                        <div class="color-customizer-title-wrap">
+                            <span class="customizer-icon">🎨</span>
+                            <h3 class="color-customizer-title">انتخاب رنگ پارچه (پیش‌نمایش زنده)</h3>
+                        </div>
+                        <button type="button" class="btn-reset-color" id="resetColorBtn" title="بازگشت به رنگ اصلی">
+                            <span>رنگ اصلی</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="selected-color-info">
+                        <span>رنگ فعال: </span>
+                        <strong id="activeColorName">کرم شیری (رنگ اصلی کاتالوگ)</strong>
+                    </div>
+
+                    <div class="color-swatches-grid" id="colorSwatchesGrid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <div class="product-specs" id="productSpecs">
+                    <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--brown-800); margin-bottom: var(--space-lg);">مشخصات فنی</h3>
+                    <div class="specs-grid" id="specsGrid">
+                        <!-- Specs will be rendered by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <div class="product-price" id="productPrice">استعلام قیمت</div>
+                    <div class="flex gap-3" style="flex: 1; flex-wrap: wrap;">
+                        <a href="https://wa.me/989132160811" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" id="consultBtn" style="flex: 1; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span>درخواست خرید و مشاوره</span>
+                        </a>
+                        <a href="tel:+989132160811" class="btn btn-secondary btn-lg" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            <span>تماس با ما</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <span class="footer-logo-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                <polyline points="6 9 6 21 18 21 18 9"/>
+                            </svg>
+                        </span>
+                        <span>مبلمان میراکل</span>
+                    </a>
+                    <p class="footer-description">
+                        بیش از ۲۰ سال تجربه در تولید و عرضه مبلمان میراکل با کیفیت بالا. ما با عشق و دقت، فضای زیباتر برای خانه شما می‌سازیم.
+                    </p>
+                </div>
+
+                <nav class="footer-nav" aria-label="لینک‌های سریع">
+                    <h3 class="footer-heading">لینک‌های سریع</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">خانه</a></li>
+                        <li><a href="index.html#catalog">کاتالوگ محصولات</a></li>
+                        <li><a href="index.html#coffee-tables">میز جلو مبلی</a></li>
+                        <li><a href="blog.html">وبلاگ</a></li>
+                        <li><a href="contact.html">تماس با ما</a></li>
+                    </ul>
+                </nav>
+
+                <div class="footer-nav" aria-label="اطلاعات تماس">
+                    <h3 class="footer-heading">تماس با ما</h3>
+                    <div class="footer-contact-item">
+                        <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <div>
+                            <p>اصفهان، خیابان پروفسور میردامادی، روبه‌روی سه‌راه کشاورز، کوچه گلبرگ، انتهای کوچه</p>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        <div>
+                            <p><a href="tel:+989130260811">۰۹۱۳۰۲۶۰۸۱۱</a></p>
+                            <p><a href="tel:+989132160811">۰۹۱۳۲۱۶۰۸۱۱</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; ۱۴۰۳ مبلمان میراکل. تمام حقوق محفوظ است.</p>
+                <nav class="footer-legal" aria-label="پیوندهای قانونی">
+                    <a href="#">قوانین و مقررات</a>
+                    <a href="#">حریم خصوصی</a>
+                    <a href="#">سیاست بازگرداندن</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/masks-data.js?v=2"></script>
+    <script src="js/script.js?v=8"></script>
+</body>
+</html>
